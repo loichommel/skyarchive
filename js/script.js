@@ -941,15 +941,15 @@ function initMap(processedData) {
     });
 
     // --- Light Pollution Tile Layer ---
-    const europeLPTileUrl = 'img/map_overlays/europe_lp_web_tiles/{z}/{x}/{y}.png';
-    const europeLPLayer = L.tileLayer(europeLPTileUrl, {
+    const worldLPTileUrl = 'img/map_overlays/WORLD_LP_XYZ_TILES_TEST_0_4/{z}/{x}/{y}.png';
+    const worldLPLayer = L.tileLayer(worldLPTileUrl, {
         opacity: 0.75, // Set default opacity to 75%
         attribution: 'Light Pollution Data © VIIRS/NASA', // Update attribution as needed
-        minZoom: 3, // From your gdal2tiles command
-        maxNativeZoom: 8, // Updated to reflect new tile set's max zoom
+        minZoom: 0, // Updated for global tiles
+        maxNativeZoom: 8, // Updated for global tiles (0-8)
         maxZoom: 19, // Max zoom of the base map, allows over-zooming
-        tms: false, // gdal2tiles default is TMS unless --profile=raster (then it's XYZ) or if using --xyz flag explicitly. Mercator profile with -xyz flag means TMS is false.
-        className: 'europe-lp-tiles' // Add a custom class for styling
+        tms: false, // Assuming XYZ tiles, so TMS is false
+        className: 'world-lp-tiles' // Add a custom class for styling
     });
 
     // Initialize MarkerCluster group
@@ -972,7 +972,7 @@ function initMap(processedData) {
     };
     const overlayMaps = {
         "Observation Points": markers, // Now defined
-        "Europe Light Pollution (2024)": europeLPLayer // Updated layer name
+        "World Light Pollution": worldLPLayer
     };
 
     // Add default base layer to map
@@ -1077,7 +1077,7 @@ function initMap(processedData) {
 
     // Optionally, add some layers by default
     markers.addTo(map); // Show observation points by default
-    europeLPLayer.addTo(map); // Show LP overlay by default
+    worldLPLayer.addTo(map); // Show LP overlay by default
 
     // --- Dynamically add Opacity Slider to Layer Control ---
     // This needs to happen after the control is added to the map and rendered.
@@ -1089,7 +1089,7 @@ function initMap(processedData) {
         overlayLabels.forEach(labelNode => {
             // Find the label for the Luxembourg Light Pollution layer
             // The text content includes the input checkbox, so we check for the layer name.
-            if (labelNode.textContent && labelNode.textContent.includes("Europe Light Pollution (2024)")) { // Updated layer name check
+            if (labelNode.textContent && labelNode.textContent.includes("World Light Pollution")) {
                 const sliderContainer = L.DomUtil.create('div', 'opacity-slider-container leaflet-control-layers-custom-item');
                 
                 const sliderInput = L.DomUtil.create('input', 'opacity-slider-input', sliderContainer);
@@ -1097,7 +1097,7 @@ function initMap(processedData) {
                 sliderInput.min = '0';
                 sliderInput.max = '1';
                 sliderInput.step = '0.05';
-                sliderInput.value = europeLPLayer.options.opacity || 0.75; // Get current or default (75%)
+                sliderInput.value = worldLPLayer.options.opacity || 0.75; // Get current or default (75%)
                 
                 const valueDisplay = L.DomUtil.create('span', 'opacity-slider-value', sliderContainer);
                 // Format initial value as percentage
@@ -1109,7 +1109,7 @@ function initMap(processedData) {
 
 
                 sliderInput.addEventListener('input', function() {
-                    europeLPLayer.setOpacity(this.value); // Control the new layer's opacity
+                    worldLPLayer.setOpacity(this.value); // Control the new layer's opacity
                     // Format displayed value as percentage
                     valueDisplay.textContent = Math.round(parseFloat(this.value) * 100) + '%';
                 });

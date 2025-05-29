@@ -28,7 +28,7 @@
   } 
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Lato', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--dark-bg);
     color: var(--text-primary);
     margin: 0;
@@ -200,7 +200,7 @@ section {
 
 .card {
     background: var(--dark-card);
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -239,7 +239,7 @@ section {
 
 .map-container {
     height: 600px;
-    border-radius: 10px;
+    border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.05);
