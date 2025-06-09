@@ -941,12 +941,12 @@ function initMap(processedData) {
     });
 
     // --- Light Pollution Tile Layer ---
-    const worldLPTileUrl = 'img/map_overlays/WORLD_LP_XYZ_TILES_TEST_0_4/{z}/{x}/{y}.png';
+    const worldLPTileUrl = 'img/map_overlays/LP_2024/{z}/{x}/{y}.png';
     const worldLPLayer = L.tileLayer(worldLPTileUrl, {
         opacity: 0.75, // Set default opacity to 75%
         attribution: 'Light Pollution Data © VIIRS/NASA', // Update attribution as needed
-        minZoom: 0, // Updated for global tiles
-        maxNativeZoom: 8, // Updated for global tiles (0-8)
+        minZoom: 1, // Updated for LP_2024 tiles
+        maxNativeZoom: 7, // Updated for LP_2024 tiles (1-7)
         maxZoom: 19, // Max zoom of the base map, allows over-zooming
         tms: false, // Assuming XYZ tiles, so TMS is false
         className: 'world-lp-tiles' // Add a custom class for styling
