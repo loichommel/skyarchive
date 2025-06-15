@@ -33,26 +33,6 @@
             color: #eee;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
         }
-        .osd-back-button-container { /* New container for back button */
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: 10px 20px;
-            z-index: 10;
-        }
-        .back-button { /* General style for the back button link */
-            color: #eee;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            text-decoration: none;
-            font-size: 1rem;
-            padding: 5px 10px;
-            border-radius: 3px;
-            background-color: rgba(255,255,255,0.1);
-            transition: background-color 0.3s;
-        }
-        .back-button:hover {
-            background-color: rgba(255,255,255,0.2);
-        }
         #osd-image-viewer {
             width: 100%;
             height: 100%;
@@ -82,9 +62,6 @@
 
     <div class="osd-title-bar">
         <h1 id="osd-image-title">Loading Image...</h1>
-    </div>
-    <div class="osd-back-button-container">
-        <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i> Back to Gallery</a>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/openseadragon.min.js"></script>

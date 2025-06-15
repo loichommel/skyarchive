@@ -1,18 +1,42 @@
 [
   {
     "title": "Brocchi's Cluster",
-    "date": "2024-01-15",
-    "camera": "ASI2600MC Pro",
-    "telescope": "Celestron RASA 8",
+    "date": "2024-07-31",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "Brocchi_s_Cluster.jpg",
     "previewName": "Brocchi_s_Cluster_preview.jpg"
   },
   {
+    "title": "LBN132",
+    "date": "2024-xx-xx",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "LBN132.jpg",
+    "previewName": "LBN132_preview.jpg"
+  },
+  {
+    "title": "LDN769",
+    "date": "2024-xx-xx",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "LDN769.jpg",
+    "previewName": "LDN769_preview.jpg"
+  },
+  {
     "title": "LDN807",
-    "date": "2023-11-20",
-    "camera": "Nikon Z6 (mod)",
-    "telescope": "William Optics RedCat 51",
+    "date": "2024-xx-xx",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "LDN807.jpg",
     "previewName": "LDN807_preview.jpg"
+  },
+  {
+    "title": "M81",
+    "date": "2024-xx-xx",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "M81.jpg",
+    "previewName": "M81_preview.jpg"
   }
 ]

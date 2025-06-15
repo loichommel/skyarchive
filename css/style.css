@@ -1632,8 +1632,8 @@ footer {
 
 .lightbox-close {
   position: absolute;
-  top: -10px; /* Adjusted for better placement with padding */
-  right: -10px;
+  top: 15px; /* Positioned inside the lightbox content area */
+  right: 15px; /* Positioned inside the lightbox content area */
   color: #fff;
   background: var(--primary);
   border: none;
