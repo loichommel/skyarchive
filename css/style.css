@@ -1578,14 +1578,14 @@ footer {
     font-size: 0.9rem;
 }
 
-/* Lightbox styles for OpenSeadragon */
+/* Lightbox styles (Reverted to simple static image display) */
 .lightbox-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9); /* Darker overlay */
+  background: rgba(0, 0, 0, 0.85); /* Original overlay darkness */
   display: none;
   justify-content: center;
   align-items: center;
@@ -1601,39 +1601,39 @@ footer {
 
 .lightbox-content {
   position: relative;
-  width: 90vw; /* Default width */
-  height: 85vh; /* Default height */
-  background: #000; /* Black background for OSD viewer */
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #111; /* Dark background for the image container */
+  padding: 20px; /* Increased padding */
   border-radius: 5px;
   box-shadow: 0 0 30px rgba(0,0,0,0.7);
-  display: flex; /* Use flex to manage internal layout */
-  flex-direction: column;
-  overflow: hidden; /* Important for OSD */
+  text-align: center; /* Center content like caption and button */
 }
 
-/* Container for OpenSeadragon viewer */
-#openseadragon-viewer {
-  width: 100%;
-  height: calc(100% - 40px); /* Adjust height to leave space for caption/controls */
-  background-color: #000; /* Ensure OSD viewer area is black */
-}
+/* img is now directly inside .lightbox-content, ensure it's styled correctly */
+/* .lightbox-content img is handled by inline styles in JS for max-width/max-height */
 
 .lightbox-caption {
   color: #ccc;
   text-align: center;
-  padding: 8px 0;
+  margin-top: 10px; /* Original margin */
   font-size: 0.9rem;
-  background-color: rgba(0,0,0,0.5); /* Semi-transparent background for caption */
-  width: 100%;
-  box-sizing: border-box;
-  height: 40px; /* Fixed height for caption area */
-  line-height: 24px; /* Adjust for vertical centering if needed */
+}
+
+.lightbox-osd-link {
+  /* Using .btn styles from earlier in the file, can add specifics here if needed */
+  margin-top: 15px !important; /* Ensure spacing, !important if needed */
+  display: inline-block !important; /* Ensure it behaves like a button */
+  text-decoration: none; /* Remove underline from link if .btn doesn't cover it */
+}
+.lightbox-osd-link i {
+  margin-right: 8px;
 }
 
 .lightbox-close {
   position: absolute;
-  top: 10px; /* Align with zoom toggle */
-  right: 10px;
+  top: -10px; /* Adjusted for better placement with padding */
+  right: -10px;
   color: #fff;
   background: var(--primary);
   border: none;
@@ -1646,17 +1646,14 @@ footer {
   text-align: center;
   border-radius: 50%;
   box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  z-index: 1001; /* Ensure it's above OSD */
+  z-index: 1001;
 }
 .lightbox-close:hover {
   background: var(--primary-hover);
 }
 
-/* OpenSeadragon specific overrides if needed */
-.openseadragon-container {
-    outline: none !important; /* Remove focus outline from OSD */
-}
-.openseadragon-container .navigator {
-    border: 1px solid var(--primary) !important;
-    background-color: rgba(0,0,0,0.6) !important;
-}
+/* Remove OpenSeadragon specific overrides if they were added here */
+/* For example:
+.openseadragon-container { ... }
+.openseadragon-container .navigator { ... }
+*/

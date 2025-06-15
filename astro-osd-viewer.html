@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Astro Image Viewer - SkyArchive</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css"> <!-- Basic styles for header/footer if any -->
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent scrollbars from body */
+            background-color: #000;
+            color: #fff;
+            font-family: 'Lato', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .osd-title-bar { /* New container for title */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%; /* Span width to allow text alignment if needed, or just fit content */
+            padding: 10px 20px;
+            background: none;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+        #osd-image-title { /* Direct styling for the h1 title */
+            font-size: 1.2rem;
+            margin: 0;
+            color: #eee;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }
+        .osd-back-button-container { /* New container for back button */
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 10px 20px;
+            z-index: 10;
+        }
+        .back-button { /* General style for the back button link */
+            color: #eee;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 5px 10px;
+            border-radius: 3px;
+            background-color: rgba(255,255,255,0.1);
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        #osd-image-viewer {
+            width: 100%;
+            height: 100%;
+            /* padding-bottom: 50px; */ /* Removed padding to allow OSD content to go under the header */
+            box-sizing: border-box;
+            /* position: relative; */ /* No longer needed for osd-navigator-container */
+        }
+        /* Ensure OSD controls are visible on dark background */
+        .openseadragon-container .navigator,
+        .openseadragon-container .openseadragon-toolbar {
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            background-color: rgba(30,30,30,0.7) !important;
+        }
+        .openseadragon-container .navigator { /* Style OSD's default navigator */
+            margin: 10px; /* Add 10px space from the edges */
+            /* The border and background are already set above, this adds margin */
+        }
+         .openseadragon-container .openseadragon-toolbar div {
+            background-image: url('https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/images/buttons.png') !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="osd-image-viewer">
+        <!-- OSD will create its navigator inside this div if showNavigator is true -->
+    </div>
+
+    <div class="osd-title-bar">
+        <h1 id="osd-image-title">Loading Image...</h1>
+    </div>
+    <div class="osd-back-button-container">
+        <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i> Back to Gallery</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/openseadragon.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const imagePath = urlParams.get('image');
+            const imageTitle = urlParams.get('title') || 'Astro Image';
+            // const imageCaption = urlParams.get('caption') || ''; // Caption can be used if needed
+
+            document.getElementById('osd-image-title').textContent = imageTitle;
+            document.title = imageTitle + " - SkyArchive Astro Viewer";
+
+
+            if (imagePath) {
+                OpenSeadragon({
+                    id: "osd-image-viewer",
+                    prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/images/",
+                    tileSources: {
+                        type: 'image',
+                        url: imagePath
+                    },
+                    animationTime: 2,
+                    blendTime: 0.1,
+                    constrainDuringPan: true,
+                    maxZoomPixelRatio: 3, // Allow a bit more zoom for astro
+                    minZoomImageRatio: 0.7, // Allow zooming out a bit more
+                    visibilityRatio: 0.8,
+                    zoomPerScroll: 1.5,
+                    showNavigator: true,
+                    // navigatorId: "osd-navigator-container", // Removed, let OSD create its own
+                    navigatorPosition: "BOTTOM_RIGHT", // Changed to bottom right
+                    navigatorSizeRatio: 0.12,         // User's current size preference
+                    // Ensure default controls are shown
+                    showZoomControl: true,
+                    showHomeControl: true,
+                    showFullPageControl: true,
+                    showSequenceControl: false, // Assuming single image
+                    // Adjust control button opacity if needed for visibility
+                    // controlsFadeDelay: 1000, 
+                    // controlsFadeLength: 500
+                });
+            } else {
+                document.getElementById('osd-image-viewer').innerHTML = '<p style="color: #fff; text-align: center; padding-top: 50px;">Error: Image path not provided.</p>';
+                document.getElementById('osd-image-title').textContent = 'Error';
+            }
+        });
+    </script>
+</body>
+</html>

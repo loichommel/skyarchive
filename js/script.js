@@ -807,78 +807,57 @@ function clearStaticContent() {
 }
 
 // --- START: Lightbox Functions ---
-let osdViewer = null; // Keep a reference to the OpenSeadragon viewer
+// let osdViewer = null; // No longer needed here
 
-function openLightbox(imagePath, captionText) {
+function openLightbox(imagePath, captionText, title) { // Added title for OSD page link
     let lightbox = document.getElementById('lightbox-overlay');
     if (!lightbox) {
         lightbox = document.createElement('div');
         lightbox.id = 'lightbox-overlay';
         lightbox.className = 'lightbox-overlay';
+        // Lightbox HTML for static image and link to OSD viewer
         lightbox.innerHTML = `
             <div class="lightbox-content">
-                <div id="openseadragon-viewer"></div>
-                <div class="lightbox-caption"></div>
+                <img src="" alt="Astrophoto Full Size" style="display: block; max-width: 100%; max-height: calc(90vh - 100px); object-fit: contain; border-radius: 3px; margin: auto;">
+                <div class="lightbox-caption" style="margin-top:10px;"></div>
+                <a href="#" class="btn lightbox-osd-link" style="display: block; width: fit-content; margin: 15px auto 0;">
+                    <i class="fas fa-search-plus"></i> Immersive Pan & Zoom
+                </a>
             </div>
             <button class="lightbox-close" aria-label="Close lightbox">&times;</button>
         `;
         document.body.appendChild(lightbox);
         lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
         lightbox.addEventListener('click', function(e) {
-            // Close if clicking on the overlay itself, not its children
             if (e.target === lightbox) {
                 closeLightbox();
             }
         });
     }
 
-    lightbox.querySelector('.lightbox-caption').textContent = captionText || '';
+    const imgElement = lightbox.querySelector('.lightbox-content img');
+    const captionElement = lightbox.querySelector('.lightbox-caption');
+    const osdLink = lightbox.querySelector('.lightbox-osd-link');
+
+    imgElement.src = imagePath;
+    imgElement.alt = captionText || "Astrophotography Image";
+    captionElement.textContent = captionText || '';
+
+    // Construct URL for the dedicated OSD viewer page
+    const osdViewerPageUrl = new URL('astro-osd-viewer.html', window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/');
+    osdViewerPageUrl.searchParams.set('image', imagePath);
+    if (title) osdViewerPageUrl.searchParams.set('title', title);
+    if (captionText) osdViewerPageUrl.searchParams.set('caption', captionText); // Pass full caption
     
-    if (osdViewer) {
-        osdViewer.destroy();
-        osdViewer = null;
-    }
+    osdLink.href = osdViewerPageUrl.toString();
+    // Optional: open in new tab
+    // osdLink.target = "_blank";
 
-    osdViewer = OpenSeadragon({
-        id: "openseadragon-viewer",
-        prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/images/",
-        tileSources: {
-            type: 'image',
-            url: imagePath
-        },
-        animationTime: 0.5,
-        blendTime: 0.1,
-        constrainDuringPan: true,
-        maxZoomPixelRatio: 2,
-        minZoomImageRatio: 0.8,
-        visibilityRatio: 1,
-        zoomPerScroll: 1.5,
-        showNavigator: true,
-        navigatorId: null, // To prevent OSD from creating its own navigator div if we want to place it manually later
-        navigatorPosition: 'BOTTOM_RIGHT',
-        navigatorSizeRatio: 0.2,
-        // Default OSD controls will be used by not specifying toolbar options
-        // or by explicitly enabling them if needed.
-        // For example, to ensure default controls:
-        // showZoomControl: true,
-        // showHomeControl: true,
-        // showFullPageControl: true,
-        // showSequenceControl: false, // Assuming not a sequence
-    });
-
-    osdViewer.addHandler('open', function() {
-        // Optional: Fit image to viewer initially if it's too small or too large
-        // osdViewer.viewport.goHome(true); // true for immediately
-    });
-
-    // The 'full-screen' handler for custom button icon is no longer needed.
 
     lightbox.style.display = 'flex';
     setTimeout(() => lightbox.classList.add('visible'), 10);
     document.body.style.overflow = 'hidden';
 }
-
-// The toggleOsdFullscreen function is no longer needed.
 
 function closeLightbox() {
     const lightbox = document.getElementById('lightbox-overlay');
@@ -886,14 +865,8 @@ function closeLightbox() {
         lightbox.classList.remove('visible');
         setTimeout(() => {
             lightbox.style.display = 'none';
-            if (osdViewer) {
-                osdViewer.destroy();
-                osdViewer = null;
-            }
-            // Clear the OSD container div if needed, though destroy should handle it.
-            const osdContainer = document.getElementById('openseadragon-viewer');
-            if (osdContainer) osdContainer.innerHTML = '';
-
+            const imgElement = lightbox.querySelector('.lightbox-content img');
+            if (imgElement) imgElement.src = ""; // Clear image src
         }, 300); // Match CSS transition duration
     }
     document.body.style.overflow = '';
@@ -920,7 +893,9 @@ function initAstroGallery(astroData) {
         
         const previewImagePath = `img/astrophotos/${item.previewName}`;
         const fullImagePath = `img/astrophotos/${item.imageName}`;
-        const caption = `${item.title} (Date: ${item.date}, Camera: ${item.camera}, Telescope: ${item.telescope})`;
+        // Construct a more detailed caption if needed, or keep it simple
+        const caption = `${item.title} - ${item.date} | Camera: ${item.camera}, Telescope: ${item.telescope}`;
+        const itemTitle = item.title; // Pass title separately for OSD page
 
         galleryItem.innerHTML = `
             <img src="${previewImagePath}" alt="Preview of ${item.title}" loading="lazy" onerror="this.src='img/placeholder_thumbnail.jpg'; this.alt='Error loading preview';">
@@ -932,7 +907,7 @@ function initAstroGallery(astroData) {
             </div>
         `;
         galleryItem.addEventListener('click', () => {
-            openLightbox(fullImagePath, caption);
+            openLightbox(fullImagePath, caption, itemTitle); // Pass itemTitle to openLightbox
         });
         galleryGrid.appendChild(galleryItem);
     });
