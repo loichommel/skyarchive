@@ -595,56 +595,59 @@ function createPolarPlot(containerId, polarData, locationDetails) { // Added loc
 // The fetchLocationName function has been removed as location data is now sourced directly from the manifest.
 
 async function loadAndProcessData() {
-    console.log("Loading manifest...");
+    console.log("Loading manifests...");
     try {
-        const response = await fetch('data/manifest.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const [panoManifestResponse, astroManifestResponse] = await Promise.all([
+            fetch('data/manifest.json'),
+            fetch('data/astro_manifest.json')
+        ]);
+
+        if (!panoManifestResponse.ok) {
+            throw new Error(`HTTP error! status: ${panoManifestResponse.status} for panorama manifest`);
         }
-        const manifest = await response.json();
-        console.log("Manifest loaded:", manifest);
+        const panoManifest = await panoManifestResponse.json();
+        console.log("Panorama Manifest loaded:", panoManifest);
 
-        // --- Identify Featured Items ---
-        // Currently selects the first 'MAX_FEATURED_PANORAMAS' items from the manifest.
-        // For more control, consider adding a "featured": true flag to specific items in data/manifest.json
-        // and filtering based on that flag here instead of slicing.
-        const featuredItemsCount = Math.min(manifest.length, MAX_FEATURED_PANORAMAS); // Use configurable limit
-        const featuredManifest = manifest.slice(0, featuredItemsCount);
-        // Store the full manifest for other parts like the map/gallery
-        const fullManifest = manifest;
+        let astroManifest = [];
+        if (astroManifestResponse.ok) {
+            astroManifest = await astroManifestResponse.json();
+            console.log("Astro Manifest loaded:", astroManifest);
+        } else {
+            console.warn(`Could not load astro_manifest.json: ${astroManifestResponse.status}. Astro gallery will be empty.`);
+        }
 
-        // Process only featured items first to speed up initial histogram display
-        const featuredProcessingPromises = featuredManifest.map(async (item) => {
+        // --- Process Panorama Data ---
+        const featuredItemsCount = Math.min(panoManifest.length, MAX_FEATURED_PANORAMAS);
+        const featuredPanoManifest = panoManifest.slice(0, featuredItemsCount);
+        const fullPanoManifest = panoManifest;
+
+        const featuredPanoProcessingPromises = featuredPanoManifest.map(async (item) => {
             const sqmResult = await fetchAndParseSqm(item.sqmFileUrl);
-            // Construct location name directly from manifest fields
             let locationName = [item.locality, item.region, item.country].filter(Boolean).join(', ');
-            if (!locationName && item.latitude && item.longitude) { // Fallback to coordinates if primary fields are empty
+            if (!locationName && item.latitude && item.longitude) {
                 locationName = `Lat: ${item.latitude.toFixed(3)}, Lon: ${item.longitude.toFixed(3)}`;
             } else if (!locationName) {
-                locationName = "Unknown Location"; // Ultimate fallback
+                locationName = "Unknown Location";
             }
-
             return {
-                ...item, // Includes new fields like country, region, locality, exactIdentifier, panoNum, previewUrl
+                ...item,
                 medianSqm: sqmResult.medianSqm !== null ? sqmResult.medianSqm.toFixed(2) : "N/A",
                 allSqmValues: sqmResult.allSqmValues,
                 polarData: sqmResult.polarData,
-                locationName: locationName, // Use constructed name
-                // thumbnailUrl is now item.previewUrl from the new manifest
+                locationName: locationName,
                 isFeatured: true
             };
         });
-        let featuredData = await Promise.all(featuredProcessingPromises);
+        const featuredPanoData = await Promise.all(featuredPanoProcessingPromises);
 
-        // Process the rest of the items (for map/gallery)
-        const remainingManifest = fullManifest.slice(featuredItemsCount);
-        const remainingProcessingPromises = remainingManifest.map(async (item) => {
+        const remainingPanoManifest = fullPanoManifest.slice(featuredItemsCount);
+        const remainingPanoProcessingPromises = remainingPanoManifest.map(async (item) => {
              const sqmResult = await fetchAndParseSqm(item.sqmFileUrl);
              let locationName = [item.locality, item.region, item.country].filter(Boolean).join(', ');
-             if (!locationName && item.latitude && item.longitude) { // Fallback to coordinates
+             if (!locationName && item.latitude && item.longitude) {
                  locationName = `Lat: ${item.latitude.toFixed(3)}, Lon: ${item.longitude.toFixed(3)}`;
              } else if (!locationName) {
-                locationName = "Unknown Location"; // Ultimate fallback
+                locationName = "Unknown Location";
              }
              return {
                  ...item,
@@ -655,14 +658,18 @@ async function loadAndProcessData() {
                  isFeatured: false
              };
          });
-        const remainingData = await Promise.all(remainingProcessingPromises);
+        const remainingPanoData = await Promise.all(remainingPanoProcessingPromises);
+        const processedPanoData = [...featuredPanoData, ...remainingPanoData];
+        console.log("Panorama data processed:", processedPanoData);
 
-        // Combine featured and remaining data
-        const processedData = [...featuredData, ...remainingData];
-        console.log("Data processed using manifest location info:", processedData);
+        // Astro data is already in a suitable format, just pass it along.
+        const processedAstroData = astroManifest;
+        console.log("Astro data processed:", processedAstroData);
 
-        // No longer fetching from Nominatim
-        initializeUI(processedData); // Initialize UI with all data
+        initializeUI({
+            panoData: processedPanoData,
+            astroData: processedAstroData
+        });
 
     } catch (error) {
         console.error("Failed to load or process data:", error);
@@ -670,26 +677,24 @@ async function loadAndProcessData() {
     }
 }
 
-function initializeUI(processedData) {
-    console.log("Initializing UI with processed data:", processedData);
+function initializeUI(allData) {
+    console.log("Initializing UI with all data:", allData);
+    const { panoData, astroData } = allData;
     clearStaticContent();
 
-    // Filter featured data for slider and histogram
-    const featuredData = processedData.filter(item => item.isFeatured);
+    const featuredPanoData = panoData.filter(item => item.isFeatured);
 
     if (document.getElementById('lightPollutionMap')) {
         console.log("Initializing map...");
-        initMap(processedData); // Map uses all data
+        initMap(panoData); // Map uses all panorama data
     }
-    // Initialize the featured visualizations section (Histogram + Polar Plot)
     if (document.getElementById('featuredSqmHistogram') && document.getElementById('featuredPolarPlotContainer')) {
         console.log("Initializing featured visualizations...");
-        initFeaturedVisualizations(featuredData); // Pass featured data to init function
+        initFeaturedVisualizations(featuredPanoData); // Uses featured panorama data
     }
     if (document.querySelector('.splide')) {
         console.log("Initializing panorama slider...");
-        // Slider should only show featured items
-        const sliderList = initPanoramaSlider(featuredData);
+        const sliderList = initPanoramaSlider(featuredPanoData); // Uses featured panorama data
         if (sliderList) {
             initSliderPannellumPlaceholders(sliderList);
             addSliderClickListeners(sliderList);
@@ -698,9 +703,13 @@ function initializeUI(processedData) {
     if (document.getElementById('contactForm')) {
         initContactForm();
     }
-    if (document.querySelector('.gallery-grid')) {
-        console.log("Initializing gallery...");
-        initGallery(processedData); // Gallery uses all data
+    if (document.querySelector('.gallery-grid')) { // This is for the Panorama Gallery
+        console.log("Initializing panorama gallery...");
+        initGallery(panoData); // Panorama gallery uses all panorama data
+    }
+    if (document.querySelector('.astro-gallery-grid')) { // This is for the new Astro Gallery
+        console.log("Initializing astro gallery...");
+        initAstroGallery(astroData); // Astro gallery uses astro data
     }
 }
 
@@ -789,12 +798,147 @@ function initFeaturedVisualizations(featuredData) { // Renamed function
 function clearStaticContent() {
     const sliderList = document.querySelector('.splide__list');
     if (sliderList) sliderList.innerHTML = '';
-    const galleryGrid = document.querySelector('.gallery-grid');
-    if (galleryGrid) galleryGrid.innerHTML = '';
-    // Also clear the featured histogram dropdown if needed during reloads
+    const panoGalleryGrid = document.querySelector('.gallery-grid'); // Panorama gallery
+    if (panoGalleryGrid) panoGalleryGrid.innerHTML = '';
+    const astroGalleryGrid = document.querySelector('.astro-gallery-grid'); // Astro gallery
+    if (astroGalleryGrid) astroGalleryGrid.innerHTML = '';
     const featuredSelect = document.getElementById('featuredLocationSelect');
     if (featuredSelect) featuredSelect.innerHTML = '';
 }
+
+// --- START: Lightbox Functions ---
+let osdViewer = null; // Keep a reference to the OpenSeadragon viewer
+
+function openLightbox(imagePath, captionText) {
+    let lightbox = document.getElementById('lightbox-overlay');
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'lightbox-overlay';
+        lightbox.className = 'lightbox-overlay';
+        lightbox.innerHTML = `
+            <div class="lightbox-content">
+                <div id="openseadragon-viewer"></div>
+                <div class="lightbox-caption"></div>
+            </div>
+            <button class="lightbox-close" aria-label="Close lightbox">&times;</button>
+        `;
+        document.body.appendChild(lightbox);
+        lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', function(e) {
+            // Close if clicking on the overlay itself, not its children
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+    }
+
+    lightbox.querySelector('.lightbox-caption').textContent = captionText || '';
+    
+    if (osdViewer) {
+        osdViewer.destroy();
+        osdViewer = null;
+    }
+
+    osdViewer = OpenSeadragon({
+        id: "openseadragon-viewer",
+        prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/images/",
+        tileSources: {
+            type: 'image',
+            url: imagePath
+        },
+        animationTime: 0.5,
+        blendTime: 0.1,
+        constrainDuringPan: true,
+        maxZoomPixelRatio: 2,
+        minZoomImageRatio: 0.8,
+        visibilityRatio: 1,
+        zoomPerScroll: 1.5,
+        showNavigator: true,
+        navigatorId: null, // To prevent OSD from creating its own navigator div if we want to place it manually later
+        navigatorPosition: 'BOTTOM_RIGHT',
+        navigatorSizeRatio: 0.2,
+        // Default OSD controls will be used by not specifying toolbar options
+        // or by explicitly enabling them if needed.
+        // For example, to ensure default controls:
+        // showZoomControl: true,
+        // showHomeControl: true,
+        // showFullPageControl: true,
+        // showSequenceControl: false, // Assuming not a sequence
+    });
+
+    osdViewer.addHandler('open', function() {
+        // Optional: Fit image to viewer initially if it's too small or too large
+        // osdViewer.viewport.goHome(true); // true for immediately
+    });
+
+    // The 'full-screen' handler for custom button icon is no longer needed.
+
+    lightbox.style.display = 'flex';
+    setTimeout(() => lightbox.classList.add('visible'), 10);
+    document.body.style.overflow = 'hidden';
+}
+
+// The toggleOsdFullscreen function is no longer needed.
+
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox-overlay');
+    if (lightbox) {
+        lightbox.classList.remove('visible');
+        setTimeout(() => {
+            lightbox.style.display = 'none';
+            if (osdViewer) {
+                osdViewer.destroy();
+                osdViewer = null;
+            }
+            // Clear the OSD container div if needed, though destroy should handle it.
+            const osdContainer = document.getElementById('openseadragon-viewer');
+            if (osdContainer) osdContainer.innerHTML = '';
+
+        }, 300); // Match CSS transition duration
+    }
+    document.body.style.overflow = '';
+}
+// --- END: Lightbox Functions ---
+
+// --- START: Astro Gallery Initialization ---
+function initAstroGallery(astroData) {
+    const galleryGrid = document.querySelector('.astro-gallery-grid');
+    if (!galleryGrid) {
+        console.warn("Astro gallery grid not found. Skipping astro gallery initialization.");
+        return;
+    }
+    galleryGrid.innerHTML = ''; // Clear existing items
+
+    if (!astroData || astroData.length === 0) {
+        galleryGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No astrophotography images available yet.</p>';
+        return;
+    }
+
+    astroData.forEach(item => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'astro-gallery-item';
+        
+        const previewImagePath = `img/astrophotos/${item.previewName}`;
+        const fullImagePath = `img/astrophotos/${item.imageName}`;
+        const caption = `${item.title} (Date: ${item.date}, Camera: ${item.camera}, Telescope: ${item.telescope})`;
+
+        galleryItem.innerHTML = `
+            <img src="${previewImagePath}" alt="Preview of ${item.title}" loading="lazy" onerror="this.src='img/placeholder_thumbnail.jpg'; this.alt='Error loading preview';">
+            <div class="astro-gallery-info">
+                <h4>${item.title}</h4>
+                <p>Date: ${item.date}</p>
+                <p>Camera: ${item.camera}</p>
+                <p>Telescope: ${item.telescope}</p>
+            </div>
+        `;
+        galleryItem.addEventListener('click', () => {
+            openLightbox(fullImagePath, caption);
+        });
+        galleryGrid.appendChild(galleryItem);
+    });
+}
+// --- END: Astro Gallery Initialization ---
+
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM Loaded. Initializing scripts.");

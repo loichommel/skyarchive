@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyArchive - Astrophotography Gallery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Consider adding a lightbox library CSS here if desired for image viewing -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="img/icons/SkyArchive_logo_bright.png" alt="SkyArchive Logo" class="logo-icon">SkyArchive
+                </a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#map">Interactive Map</a></li>
+                    <li><a href="index.html#panoramas">Featured Panoramas</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn">Gallery <i class="fas fa-caret-down"></i></a>
+                        <div class="dropdown-content">
+                            <a href="gallery.html">Panorama Gallery</a>
+                            <a href="astro-gallery.html">Astro Gallery</a>
+                        </div>
+                    </li>
+                    <li><a href="index.html#data">SQM Data</a></li>
+                    <li><a href="index.html#equipment">Equipment</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="gallery-container">
+        <div class="container">
+            <div class="gallery-header">
+                <h1>Astrophotography Gallery</h1>
+                <p style="color: var(--text-secondary);">A collection of deep sky images and celestial wonders.</p>
+            </div>
+            <div class="astro-gallery-grid">
+                <!-- Astrophotos will be loaded here by script.js -->
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+             <div class="footer-content">
+                <a href="index.html" class="logo">
+                    <img src="img/icons/SkyArchive_logo_bright.png" alt="SkyArchive Logo" class="logo-icon">SkyArchive
+                </a>
+                <ul class="social-links">
+                    <li><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>
+                    <li><a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a></li>
+                    <li><a href="#" aria-label="Flickr"><i class="fab fa-flickr"></i></a></li>
+                </ul>
+                <p class="copyright">© <span id="currentYearAstroGallery"></span> SkyArchive - Light Pollution Documentation Project. All rights reserved.</p>
+                <p class="copyright">Data and images licensed under CC BY-NC 4.0 unless otherwise noted.</p>
+                <script>document.getElementById('currentYearAstroGallery').textContent = new Date().getFullYear();</script>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Consider adding a lightbox library JS here -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/openseadragon.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
