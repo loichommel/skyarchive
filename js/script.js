@@ -839,6 +839,9 @@ function updateLightboxView(index) {
     osdViewerPageUrl.searchParams.set('image', fullImagePathForOSD);
     if (itemTitle) osdViewerPageUrl.searchParams.set('title', itemTitle);
     if (caption) osdViewerPageUrl.searchParams.set('caption', caption);
+    if (item.overlayImageName) { // Add this check
+        osdViewerPageUrl.searchParams.set('overlayImage', item.overlayImageName);
+    }
     osdLink.href = osdViewerPageUrl.toString();
 
     // Update arrow visibility

@@ -10,12 +10,13 @@
   },
   {
     "title": "LBN132",
-    "date": "2024-xx-xx",
+    "date": "2024-xx-xx to 2024-xx-xx",
     "camera": "QHY268M",
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "LBN132.jpg",
     "previewName": "LBN132_preview.jpg",
-    "mediumImageName": "LBN132_medium.jpg"
+    "mediumImageName": "LBN132_medium.jpg",
+    "overlayImageName": "LBN132_overlay.svg"
   },
   {
     "title": "LDN769",
@@ -42,6 +43,7 @@
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "M81.jpg",
     "previewName": "M81_preview.jpg",
-    "mediumImageName": "M81_medium.jpg"
+    "mediumImageName": "M81_medium.jpg",
+    "overlayImageName": "M81_overlay.svg"
   }
 ]
