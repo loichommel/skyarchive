@@ -5,7 +5,8 @@
     "camera": "QHY268M",
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "Brocchi_s_Cluster.jpg",
-    "previewName": "Brocchi_s_Cluster_preview.jpg"
+    "previewName": "Brocchi_s_Cluster_preview.jpg",
+    "mediumImageName": "Brocchi_s_Cluster_medium.jpg"
   },
   {
     "title": "LBN132",
@@ -13,7 +14,8 @@
     "camera": "QHY268M",
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "LBN132.jpg",
-    "previewName": "LBN132_preview.jpg"
+    "previewName": "LBN132_preview.jpg",
+    "mediumImageName": "LBN132_medium.jpg"
   },
   {
     "title": "LDN769",
@@ -21,7 +23,8 @@
     "camera": "QHY268M",
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "LDN769.jpg",
-    "previewName": "LDN769_preview.jpg"
+    "previewName": "LDN769_preview.jpg",
+    "mediumImageName": "LDN769_medium.jpg"
   },
   {
     "title": "LDN807",
@@ -29,7 +32,8 @@
     "camera": "QHY268M",
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "LDN807.jpg",
-    "previewName": "LDN807_preview.jpg"
+    "previewName": "LDN807_preview.jpg",
+    "mediumImageName": "LDN807_medium.jpg"
   },
   {
     "title": "M81",
@@ -37,6 +41,7 @@
     "camera": "QHY268M",
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "M81.jpg",
-    "previewName": "M81_preview.jpg"
+    "previewName": "M81_preview.jpg",
+    "mediumImageName": "M81_medium.jpg"
   }
 ]

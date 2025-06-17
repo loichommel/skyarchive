@@ -736,6 +736,41 @@ footer {
     color: var(--text-secondary);
 }
 
+/* Lightbox Navigation Arrows */
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    padding: 10px 15px;
+    cursor: pointer;
+    z-index: 1001; /* Above lightbox content, below close button if it's higher */
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-prev {
+    left: 15px;
+}
+
+.lightbox-next {
+    right: 15px;
+}
+
+.lightbox-close { /* Ensure close button is on top */
+    z-index: 1002;
+}
+
+
 @media (max-width: 768px) {
     .gallery-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

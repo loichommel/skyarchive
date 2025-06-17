@@ -807,16 +807,56 @@ function clearStaticContent() {
 }
 
 // --- START: Lightbox Functions ---
-// let osdViewer = null; // No longer needed here
+let currentAstroGalleryIndex = 0;
+let astroGalleryItems = [];
 
-function openLightbox(imagePath, captionText, title) { // Added title for OSD page link
+function updateLightboxView(index) {
+    if (index < 0 || index >= astroGalleryItems.length) {
+        console.warn("Index out of bounds for lightbox navigation:", index);
+        return;
+    }
+    currentAstroGalleryIndex = index;
+    const item = astroGalleryItems[index];
+    const lightbox = document.getElementById('lightbox-overlay');
+    if (!lightbox || !item) return;
+
+    const imgElement = lightbox.querySelector('.lightbox-content img');
+    const captionElement = lightbox.querySelector('.lightbox-caption');
+    const osdLink = lightbox.querySelector('.lightbox-osd-link');
+    const prevArrow = lightbox.querySelector('.lightbox-prev');
+    const nextArrow = lightbox.querySelector('.lightbox-next');
+
+    const mediumImagePath = `img/astrophotos/${item.mediumImageName}`;
+    const fullImagePathForOSD = `img/astrophotos/${item.imageName}`;
+    const caption = `${item.title} - ${item.date} | Camera: ${item.camera}, Telescope: ${item.telescope}`;
+    const itemTitle = item.title;
+
+    imgElement.src = mediumImagePath;
+    imgElement.alt = caption || "Astrophotography Image";
+    captionElement.textContent = caption || '';
+
+    const osdViewerPageUrl = new URL('astro-osd-viewer.html', window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/');
+    osdViewerPageUrl.searchParams.set('image', fullImagePathForOSD);
+    if (itemTitle) osdViewerPageUrl.searchParams.set('title', itemTitle);
+    if (caption) osdViewerPageUrl.searchParams.set('caption', caption);
+    osdLink.href = osdViewerPageUrl.toString();
+
+    // Update arrow visibility
+    if (prevArrow) prevArrow.style.display = (index === 0) ? 'none' : 'block';
+    if (nextArrow) nextArrow.style.display = (index === astroGalleryItems.length - 1) ? 'none' : 'block';
+}
+
+function openLightbox(index, items) {
+    astroGalleryItems = items;
+    currentAstroGalleryIndex = index;
+
     let lightbox = document.getElementById('lightbox-overlay');
     if (!lightbox) {
         lightbox = document.createElement('div');
         lightbox.id = 'lightbox-overlay';
         lightbox.className = 'lightbox-overlay';
-        // Lightbox HTML for static image and link to OSD viewer
         lightbox.innerHTML = `
+            <button class="lightbox-prev" aria-label="Previous image">&#10094;</button>
             <div class="lightbox-content">
                 <img src="" alt="Astrophoto Full Size" style="display: block; max-width: 100%; max-height: calc(90vh - 100px); object-fit: contain; border-radius: 3px; margin: auto;">
                 <div class="lightbox-caption" style="margin-top:10px;"></div>
@@ -824,35 +864,29 @@ function openLightbox(imagePath, captionText, title) { // Added title for OSD pa
                     <i class="fas fa-search-plus"></i> Immersive Pan & Zoom
                 </a>
             </div>
+            <button class="lightbox-next" aria-label="Next image">&#10095;</button>
             <button class="lightbox-close" aria-label="Close lightbox">&times;</button>
         `;
         document.body.appendChild(lightbox);
         lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+        lightbox.querySelector('.lightbox-prev').addEventListener('click', () => {
+            if (currentAstroGalleryIndex > 0) {
+                updateLightboxView(currentAstroGalleryIndex - 1);
+            }
+        });
+        lightbox.querySelector('.lightbox-next').addEventListener('click', () => {
+            if (currentAstroGalleryIndex < astroGalleryItems.length - 1) {
+                updateLightboxView(currentAstroGalleryIndex + 1);
+            }
+        });
         lightbox.addEventListener('click', function(e) {
             if (e.target === lightbox) {
                 closeLightbox();
             }
         });
     }
-
-    const imgElement = lightbox.querySelector('.lightbox-content img');
-    const captionElement = lightbox.querySelector('.lightbox-caption');
-    const osdLink = lightbox.querySelector('.lightbox-osd-link');
-
-    imgElement.src = imagePath;
-    imgElement.alt = captionText || "Astrophotography Image";
-    captionElement.textContent = captionText || '';
-
-    // Construct URL for the dedicated OSD viewer page
-    const osdViewerPageUrl = new URL('astro-osd-viewer.html', window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) + '/');
-    osdViewerPageUrl.searchParams.set('image', imagePath);
-    if (title) osdViewerPageUrl.searchParams.set('title', title);
-    if (captionText) osdViewerPageUrl.searchParams.set('caption', captionText); // Pass full caption
     
-    osdLink.href = osdViewerPageUrl.toString();
-    // Optional: open in new tab
-    // osdLink.target = "_blank";
-
+    updateLightboxView(currentAstroGalleryIndex); // Load the initial image
 
     lightbox.style.display = 'flex';
     setTimeout(() => lightbox.classList.add('visible'), 10);
@@ -870,6 +904,8 @@ function closeLightbox() {
         }, 300); // Match CSS transition duration
     }
     document.body.style.overflow = '';
+    astroGalleryItems = []; // Clear the items array
+    currentAstroGalleryIndex = 0;
 }
 // --- END: Lightbox Functions ---
 
@@ -887,15 +923,12 @@ function initAstroGallery(astroData) {
         return;
     }
 
-    astroData.forEach(item => {
+    astroData.forEach((item, index) => { // Added index parameter
         const galleryItem = document.createElement('div');
         galleryItem.className = 'astro-gallery-item';
         
         const previewImagePath = `img/astrophotos/${item.previewName}`;
-        const fullImagePath = `img/astrophotos/${item.imageName}`;
-        // Construct a more detailed caption if needed, or keep it simple
-        const caption = `${item.title} - ${item.date} | Camera: ${item.camera}, Telescope: ${item.telescope}`;
-        const itemTitle = item.title; // Pass title separately for OSD page
+        // No longer need to construct all paths here, openLightbox will handle it via updateLightboxView
 
         galleryItem.innerHTML = `
             <img src="${previewImagePath}" alt="Preview of ${item.title}" loading="lazy" onerror="this.src='img/placeholder_thumbnail.jpg'; this.alt='Error loading preview';">
@@ -907,7 +940,7 @@ function initAstroGallery(astroData) {
             </div>
         `;
         galleryItem.addEventListener('click', () => {
-            openLightbox(fullImagePath, caption, itemTitle); // Pass itemTitle to openLightbox
+            openLightbox(index, astroData); // Pass index and the full astroData array
         });
         galleryGrid.appendChild(galleryItem);
     });
