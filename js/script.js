@@ -1,5 +1,6 @@
 // --- Configuration ---
 const MAX_FEATURED_PANORAMAS = 6; // Max number of panoramas to show in the featured slider/histogram
+const MAX_FEATURED_ASTROPHOTOS = 5; // Max number of astrophotos to show in their featured slider
 
 // --- Functions ---
 function viewPanorama(title, date, sqm, panoramaUrl, sqmFileUrl, latitude, longitude) { // Added lat, lon
@@ -700,6 +701,11 @@ function initializeUI(allData) {
             addSliderClickListeners(sliderList);
         }
     }
+    // Initialize Featured Astro Gallery if its Splide container exists on the page
+    if (document.getElementById('astro-photo-splide') && astroData) {
+        console.log("Initializing featured astrophoto gallery...");
+        initFeaturedAstroGallery(astroData, MAX_FEATURED_ASTROPHOTOS);
+    }
     if (document.getElementById('contactForm')) {
         initContactForm();
     }
@@ -911,6 +917,76 @@ function closeLightbox() {
     currentAstroGalleryIndex = 0;
 }
 // --- END: Lightbox Functions ---
+
+// --- START: Featured Astro Gallery Initialization ---
+function initFeaturedAstroGallery(astroData, maxItems) {
+    if (typeof Splide === 'undefined') {
+        console.error("Splide library not loaded. Cannot initialize featured astro gallery.");
+        return null;
+    }
+    const splideElement = document.getElementById('astro-photo-splide'); // Use the new ID
+    if (!splideElement) {
+        console.warn("Featured astrophoto Splide container ('astro-photo-splide') not found. Skipping initialization.");
+        return null;
+    }
+    const splideList = splideElement.querySelector('.splide__list');
+    if (!splideList) {
+        console.warn("Splide list for featured astrophotos not found. Skipping initialization.");
+        return null;
+    }
+
+    splideList.innerHTML = ''; // Clear existing items
+
+    if (!astroData || astroData.length === 0) {
+        splideElement.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No featured astrophotography available yet.</p>';
+        return null;
+    }
+
+    const itemsToFeature = astroData.slice(0, maxItems);
+
+    itemsToFeature.forEach((item, index) => {
+        const slide = document.createElement('li');
+        slide.className = 'splide__slide astro-splide-item'; // Add a specific class for potential styling
+
+        const previewImagePath = `img/astrophotos/${item.previewName}`;
+        // Information for the slide - can be adapted from initAstroGallery or panorama slider
+        slide.innerHTML = `
+            <img src="${previewImagePath}" alt="Preview of ${item.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+            <div class="panorama-info"> <!-- Re-use panorama-info style for consistency or create new -->
+                <h4>${item.title}</h4>
+                <p>${item.telescope}</p>
+            </div>
+        `;
+
+        slide.addEventListener('click', () => {
+            // Find the original index in the full astroData array to ensure lightbox navigation works correctly
+            const originalIndex = astroData.findIndex(fullItem => fullItem.imageName === item.imageName);
+            openLightbox(originalIndex, astroData);
+        });
+        splideList.appendChild(slide);
+    });
+
+    // Initialize Splide for the astrophoto slider
+    const astroSplideInstance = new Splide(splideElement, {
+        type: 'loop',
+        perPage: 3,
+        perMove: 1,
+        gap: '1rem',
+        pagination: false,
+        autoplay: true,
+        interval: 5000,
+        pauseOnHover: true,
+        breakpoints: {
+            1024: { perPage: 2 },
+            768: { perPage: 1 },
+        },
+    });
+    astroSplideInstance.mount();
+    console.log("Featured astrophoto gallery initialized.");
+    return astroSplideInstance;
+}
+// --- END: Featured Astro Gallery Initialization ---
+
 
 // --- START: Astro Gallery Initialization ---
 function initAstroGallery(astroData) {
@@ -1324,10 +1400,19 @@ function initPanoramaSlider(featuredData) { // Changed to accept featuredData
          console.error("Splide library not loaded.");
          return null;
     }
-    const splideElement = document.querySelector('.splide');
-    const splideList = document.querySelector('.splide__list');
-    if (!splideElement || !splideList) {
-        console.warn("Splide container or list not found. Skipping slider initialization.");
+    const panoramaSection = document.getElementById('panoramas');
+    if (!panoramaSection) {
+        console.warn("Panorama section ('#panoramas') not found. Skipping panorama slider initialization.");
+        return null;
+    }
+    const splideElement = panoramaSection.querySelector('.splide'); // More specific selector
+    if (!splideElement) {
+        console.warn("Splide container for panoramas not found within #panoramas. Skipping slider initialization.");
+        return null;
+    }
+    const splideList = splideElement.querySelector('.splide__list');
+    if (!splideList) {
+        console.warn("Splide list for panoramas not found. Skipping slider initialization.");
         return null;
     }
 
@@ -1374,12 +1459,15 @@ function initPanoramaSlider(featuredData) { // Changed to accept featuredData
      }
 
     const splideInstance = new Splide(splideElement, {
-        type       : 'loop', // Or 'slide' if loop is not desired
-        perPage    : 3,      // Adjust as needed
+        type       : 'loop',
+        perPage    : 1,      // Panoramas are more detailed, show 1 at a time
         perMove    : 1,
         gap        : '1.5rem',
-        pagination : false, // Hide pagination dots
-        // arrows     : true,   // Ensure arrows are shown
+        pagination : true, // Show pagination for panoramas
+        arrows     : true,   // Ensure arrows are shown
+        autoplay   : true,   // Enable autoplay
+        interval   : 5000,   // Set interval to 5 seconds
+        pauseOnHover: true, // Pause autoplay on hover
         breakpoints: {
             992: { perPage: 2 }, // Adjust breakpoints as needed
             768: { perPage: 1 }
@@ -1505,10 +1593,10 @@ function initContactForm() {
     }
 }
 
-function initGallery(processedData) {
-    const galleryGrid = document.querySelector('.gallery-grid');
+function initGallery(processedData) { // This is for the main panorama gallery page, not index.html featured items
+    const galleryGrid = document.querySelector('.gallery-grid'); // This targets .gallery-grid on gallery.html
     if (!galleryGrid) {
-        console.warn("Gallery grid not found. Skipping gallery initialization.");
+        // console.warn("Panorama gallery grid not found on current page. Skipping panorama gallery.html initialization.");
         return null;
     }
 

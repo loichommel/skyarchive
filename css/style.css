@@ -365,6 +365,13 @@ section {
     pointer-events: none;
 }
 
+/* Ensure images in the featured astro slider are fully opaque */
+.splide__slide.astro-splide-item img {
+    opacity: 1;
+    position: relative; /* Reset position if it's not meant to be absolute like panorama previews */
+    pointer-events: auto; /* Allow interaction if needed, though click is on slide li */
+}
+
 .splide__slide .panorama-info {
     position: absolute;
     bottom: 0;
