@@ -706,9 +706,6 @@ function initializeUI(allData) {
         console.log("Initializing featured astrophoto gallery...");
         initFeaturedAstroGallery(astroData, MAX_FEATURED_ASTROPHOTOS);
     }
-    if (document.getElementById('contactForm')) {
-        initContactForm();
-    }
     if (document.querySelector('.gallery-grid')) { // This is for the Panorama Gallery
         console.log("Initializing panorama gallery...");
         initGallery(panoData); // Panorama gallery uses all panorama data
@@ -1579,18 +1576,6 @@ function addSliderClickListeners(containerElement) {
             viewPanorama(title, date, sqm, panoramaUrl, sqmFileUrl, latitude, longitude);
         });
     });
-}
-
-function initContactForm() {
-    const form = document.getElementById('contactForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Basic placeholder submission
-            alert('Thank you for your message! (Submission logic is a placeholder)');
-            form.reset();
-        });
-    }
 }
 
 function initGallery(processedData) { // This is for the main panorama gallery page, not index.html featured items

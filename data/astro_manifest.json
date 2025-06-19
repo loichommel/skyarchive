@@ -6,7 +6,8 @@
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "Brocchi_s_Cluster.jpg",
     "previewName": "Brocchi_s_Cluster_preview.jpg",
-    "mediumImageName": "Brocchi_s_Cluster_medium.jpg"
+    "mediumImageName": "Brocchi_s_Cluster_medium.jpg",
+    "overlayImageName": "Brocchi_s_Cluster_overlay.svg"
   },
   {
     "title": "LBN132",
@@ -25,7 +26,8 @@
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "LDN769.jpg",
     "previewName": "LDN769_preview.jpg",
-    "mediumImageName": "LDN769_medium.jpg"
+    "mediumImageName": "LDN769_medium.jpg",
+    "overlayImageName": "LDN769_overlay.svg"
   },
   {
     "title": "LDN807",
@@ -34,7 +36,8 @@
     "telescope": "Sharpstar/TS 15028HNT",
     "imageName": "LDN807.jpg",
     "previewName": "LDN807_preview.jpg",
-    "mediumImageName": "LDN807_medium.jpg"
+    "mediumImageName": "LDN807_medium.jpg",
+    "overlayImageName": "LDN807_overlay.svg"
   },
   {
     "title": "M81",
