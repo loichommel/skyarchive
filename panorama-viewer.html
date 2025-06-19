@@ -156,6 +156,7 @@
     #back-button-logo.logo .logo-icon {
         height: 28px; /* Adjust icon size for viewer header */
         margin-right: 6px;
+        opacity: 0.5; /* Set icon transparency to 50% */
     }
 
     #view-data-button {
@@ -893,7 +894,8 @@
             "northOffset": 0,
             "hfov": hfov_initial,
             "minHfov": min_hfov,
-            "maxHfov": max_hfov
+            "maxHfov": max_hfov,
+            "friction": 0.05
           });
 
           viewer.on('error', function(err) {
