@@ -1156,14 +1156,14 @@ function initMap(processedData) {
     });
     // Add CartoDB Dark Matter base layer
     const cartoDBDarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+        attribution: '',
         subdomains: 'abcd',
         maxZoom: 19
     });
 
     // Add CartoDB Positron (Light) base layer
     const cartoDBPositron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+        attribution: '',
         subdomains: 'abcd',
         maxZoom: 19
     });
@@ -1172,7 +1172,7 @@ function initMap(processedData) {
     const worldLPTileUrl = 'img/map_overlays/LP_2024/{z}/{x}/{y}.png';
     const worldLPLayer = L.tileLayer(worldLPTileUrl, {
         opacity: 0.75, // Set default opacity to 75%
-        attribution: 'Light Pollution Data © VIIRS/NASA', // Update attribution as needed
+        attribution: '', // Update attribution as needed
         minZoom: 1, // Updated for LP_2024 tiles
         maxNativeZoom: 7, // Updated for LP_2024 tiles (1-7)
         maxZoom: 19, // Max zoom of the base map, allows over-zooming
@@ -1189,7 +1189,7 @@ function initMap(processedData) {
 
     // Define base maps and overlays for layer control
     const openStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: '',
         maxZoom: 19
     });
 

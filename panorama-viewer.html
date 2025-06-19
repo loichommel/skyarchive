@@ -715,18 +715,18 @@
                     }
 
                     try {
-                        const map = L.map(mapContainer).setView([(startLat + targetLat) / 2, (startLon + targetLon) / 2], 5);
+                        const map = L.map(mapContainer, { attributionControl: false }).setView([(startLat + targetLat) / 2, (startLon + targetLon) / 2], 5);
                         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                             maxZoom: 19,
-                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                            attribution: ''
                         }).addTo(map);
                         L.marker([startLat, startLon]).addTo(map).bindPopup("<b>Start:</b><br>Current Location").openPopup();
                         L.marker([targetLat, targetLon]).addTo(map).bindPopup(`<b>Destination:</b><br>${locName || target.locality || 'Selected Location'}`).openPopup();
                         const pathCoords = [[startLat, startLon], [targetLat, targetLon]];
                         L.polyline(pathCoords, { color: 'grey', weight: 3, opacity: 0.6, dashArray: '5, 10' }).addTo(map);
                         const bounds = L.latLngBounds(pathCoords);
-                        const animationDurationSeconds = 3.5;
-                        map.flyToBounds(bounds, { padding: [70, 70], duration: animationDurationSeconds });
+                        map.fitBounds(bounds, { padding: [70, 70] }); // Changed from flyToBounds
+                        const animationDurationSeconds = 3.5; // Keep for dot animation timing
 
                         if (!document.getElementById('pulsing-marker-style')) {
                             const styleSheet = document.createElement("style");
