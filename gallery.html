@@ -54,26 +54,30 @@
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-             <div class="footer-content">
-                <a href="index.html" class="logo">
-                    <img src="img/icons/SkyArchive_logo_bright.png" alt="SkyArchive Logo" class="logo-icon">SkyArchive
-                </a>
-                <ul class="social-links">
-                    <li><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></li>
-                    <li><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>
-                    <li><a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a></li>
-                    <li><a href="#" aria-label="Flickr"><i class="fab fa-flickr"></i></a></li>
-                </ul>
-                <p class="copyright">© <span id="currentYearGallery"></span> SkyArchive - Light Pollution Documentation Project. All rights reserved.</p>
-                <p class="copyright">Data and images licensed under CC BY-NC 4.0 unless otherwise noted.</p>
-                <script>document.getElementById('currentYearGallery').textContent = new Date().getFullYear();</script>
-            </div>
-        </div>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
     <script src="js/script.js"></script>
+    <script>
+        fetch('_footer.html')
+            .then(response => response.text())
+            .then(data => {
+                const placeholder = document.getElementById('footer-placeholder');
+                if (placeholder) {
+                    placeholder.innerHTML = data;
+                    const scripts = placeholder.getElementsByTagName('script');
+                    for (let i = 0; i < scripts.length; i++) {
+                        const script = document.createElement('script');
+                        if (scripts[i].src) {
+                            script.src = scripts[i].src;
+                        } else {
+                            script.textContent = scripts[i].textContent;
+                        }
+                        document.body.appendChild(script).parentNode.removeChild(script);
+                    }
+                }
+            })
+            .catch(error => console.error('Error loading footer:', error));
+    </script>
 </body>
 </html>

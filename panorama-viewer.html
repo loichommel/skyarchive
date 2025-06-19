@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <style>
     :root {
-      --hotspot-alpha: 0.5; /* Default hotspot opacity */
+      --hotspot-alpha: 0.25; /* Default hotspot opacity */
       --gateway-color: rgba(0, 255, 255, 0.7); /* Cyan for gateways */
     }
     html, body {
@@ -133,10 +133,10 @@
     #viewer-ui-overlay > * {
       pointer-events: auto; /* Re-enable pointer events for controls */
       position: absolute;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(255, 255, 255, 0.10);
       padding: 8px 12px;
       border-radius: 4px;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.50);
       font-size: 0.9rem;
     }
     /* Styling for the new logo back button */
@@ -372,10 +372,10 @@
          <div class="opacity-slider-container">
             <div class="slider-control-group" title="Adjust hotspot visibility">
               <i class="fas fa-sun"></i>
-              <input type="range" id="hotspot-opacity-slider" min="0" max="100" value="50" aria-labelledby="hotspot-opacity-label">
-              <span id="hotspot-opacity-value">50%</span>
+              <input type="range" id="hotspot-opacity-slider" min="0" max="100" value="25" aria-labelledby="hotspot-opacity-label">
+              <span id="hotspot-opacity-value">25%</span>
             </div>
-         </div>
+          </div>
          <!-- View Data Button -->
          <button id="view-data-button" class="btn" title="View SQM data distribution" style="margin-top: 20px; width: 100%; padding: 10px 15px; font-size: 0.9rem;">
            <i class="fas fa-chart-bar"></i> View Data
@@ -859,6 +859,20 @@
           // Construct a preview URL for the *current* panorama by convention
           const currentPreviewUrl = currentPanoramaData.panoramaUrl.replace('_8k.jpg', '_preview.jpg');
 
+          // Determine HFOV settings based on device type
+          let hfov_initial, min_hfov, max_hfov;
+          const isMobile = window.innerWidth <= 768; // Common breakpoint for mobile
+
+          if (isMobile) {
+            hfov_initial = 70;
+            min_hfov = 15;
+            max_hfov = 100;
+          } else {
+            hfov_initial = 100;
+            min_hfov = 50;
+            max_hfov = 140;
+          }
+
           const viewer = pannellum.viewer('panorama', {
             "panorama": currentPanoramaData.panoramaUrl, // This is the 8k version
             "preview": currentPreviewUrl, // Use the derived preview URL
@@ -869,7 +883,9 @@
             "showFullscreenCtrl": true,
             "compass": true,
             "northOffset": 0,
-            "hfov": 100
+            "hfov": hfov_initial,
+            "minHfov": min_hfov,
+            "maxHfov": max_hfov
           });
 
           viewer.on('error', function(err) {
