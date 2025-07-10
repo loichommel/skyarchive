@@ -1,0 +1,1708 @@
+:root {
+    --primary: #cd9700;
+    --primary-dark: #533d77;
+    --secondary: #2400c5;
+    --tertiary: #5c62a0;
+    --dark-bg: #121212;
+    --darker-bg: #0a0a0a;
+    --dark-card: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #b4b4b4;
+    --accent: #ff006e;
+    --success: #06d6a0;
+}
+
+.pnlm-controls-container {
+    opacity: 0.15;
+    transition: opacity 0.3s ease;
+  }
+  
+  .pnlm-controls-container:hover {
+    opacity: 1;
+  }  
+  
+  
+.pnlm-controls-container {
+    left: 15px !important;  /* Adjust the value for desired spacing */
+    right: auto !important;  /* Clear any right positioning */
+  } 
+
+body {
+    font-family: 'Lato', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+header {
+    background: linear-gradient(to bottom, var(--darker-bg), rgba(18, 18, 18, 0.8));
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.logo-icon {
+    height: 48px; /* Adjusted to be 2x larger */
+    width: auto;
+    margin-right: 8px; /* Space between icon and text */
+    vertical-align: middle; /* Align with text */
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.nav-links li {
+    margin-left: 2rem;
+}
+
+.nav-links a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.hero {
+    padding: 180px 0 100px;
+    text-align: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url('../img/backgrounds/skyarchive-hero-bg.png') no-repeat center bottom/cover;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero h1 .br-mobile {
+    display: none;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    color: var(--text-secondary);
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.8rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box; /* Add this line */
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    margin-left: 1rem;
+}
+
+.btn-outline:hover {
+    background: var(--primary);
+    color: white;
+}
+
+section {
+    padding: 80px 0;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.section-title p {
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    margin: 20px auto;
+    border-radius: 2px;
+}
+
+.card {
+    background: var(--dark-card);
+    border-radius: 5px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-sizing: border-box; /* Ensure padding/border included in width */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card h3 {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.card p {
+    color: var(--text-secondary);
+}
+.card ul {
+    color: var(--text-secondary);
+    padding-left: 20px;
+}
+.card li {
+    margin-bottom: 0.5rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.map-container {
+    height: 600px;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+#lightPollutionMap {
+    height: 100%;
+    width: 100%;
+    background-color: var(--darker-bg);
+}
+
+.leaflet-control-container .leaflet-top,
+.leaflet-control-container .leaflet-bottom {
+    z-index: 999 !important;
+}
+
+.map-control-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000; /* Ensure it's above map tiles but below popups if necessary */
+    padding: 6px 10px; /* Smaller padding for a compact button */
+    font-size: 1.2rem; /* Adjust icon size */
+    line-height: 1;
+    box-sizing: border-box; /* Ensure padding and border are included in size */
+    border-radius: 4px; /* Standard border radius */
+    background-color: rgba(30, 30, 30, 0.8); /* Dark semi-transparent */
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.map-control-btn:hover {
+    background-color: rgba(50, 50, 50, 0.9);
+    color: var(--primary);
+}
+
+.map-container:-webkit-full-screen {
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9999 !important; /* High z-index for fullscreen */
+}
+.map-container:-moz-full-screen {
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9999 !important;
+}
+.map-container:-ms-fullscreen {
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9999 !important;
+}
+.map-container:fullscreen {
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9999 !important;
+}
+/* Ensure map inside fullscreen container also expands */
+.map-container:fullscreen #lightPollutionMap {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+
+.splide {
+    margin: 2rem 0;
+}
+
+.splide__slide {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 400px;
+    cursor: pointer;
+    background-color: var(--dark-card);
+}
+
+.splide__slide .pannellum-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(30, 30, 30, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    border: none;
+    text-align: center;
+    padding: 1rem;
+    box-sizing: border-box;
+    line-height: 1.4;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.splide__slide:hover .pannellum-placeholder {
+    background-color: rgba(45, 45, 45, 0.9);
+}
+
+.splide__slide .pannellum-placeholder i {
+    font-size: 2.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary);
+}
+
+.splide__slide .pannellum-placeholder span {
+    font-size: 1rem;
+    max-width: 90%;
+}
+
+.splide__slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Ensure images in the featured astro slider are fully opaque */
+.splide__slide.astro-splide-item img {
+    opacity: 1;
+    position: relative; /* Reset position if it's not meant to be absolute like panorama previews */
+    pointer-events: auto; /* Allow interaction if needed, though click is on slide li */
+}
+
+.splide__slide .panorama-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 1rem;
+    color: white;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.splide__slide h4 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.splide__slide p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.view-gallery-link {
+    display: block;
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 900;
+}
+
+.view-gallery-link:hover {
+    text-decoration: underline;
+}
+
+.data-visualization {
+    margin-top: 3rem;
+}
+
+.chart-container {
+    background: var(--dark-card);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+.location-selector {
+    margin-bottom: 1.5rem;
+}
+
+.location-selector label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.location-selector select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--dark-bg);
+    color: var(--text-primary);
+    font-size: 1rem;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23CCCCCC%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.8em auto;
+    padding-right: 2.5rem;
+}
+
+.location-selector option {
+    background: var(--dark-card);
+    color: var(--text-primary);
+}
+
+.equipment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.equipment-card {
+    background: var(--dark-card);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s;
+}
+
+.equipment-card:hover {
+    transform: translateY(-5px);
+}
+
+.equipment-img {
+    height: 200px;
+    overflow: hidden;
+}
+
+.equipment-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.equipment-card:hover .equipment-img img {
+    transform: scale(1.1);
+}
+
+.equipment-info {
+    padding: 1.5rem;
+}
+
+.equipment-info h3 {
+    color: var(--text-primary);
+    margin-top: 0;
+}
+
+.equipment-info p {
+    color: var(--text-secondary);
+}
+
+footer {
+    background: var(--darker-bg);
+    padding: 3rem 0;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.social-links {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.social-links li {
+    margin: 0 10px;
+}
+
+.social-links a {
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.social-links a:hover {
+    color: var(--primary);
+}
+
+.copyright {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 65px;
+        left: 0;
+        right: 0;
+        background: var(--darker-bg);
+        flex-direction: column;
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links li {
+        margin: 0.5rem 0;
+        margin-left: 0;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem;
+        line-height: 1.3; /* Adjust line height for multi-line title */
+    }
+
+    .hero h1 .br-mobile {
+        display: block;
+        content: ''; /* Necessary for block display to work as a line break */
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .section-title h2 {
+        font-size: 2rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero .btn {
+        display: block;
+        width: calc(100% - 4rem); /* Adjust width as needed, considering padding */
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1rem;
+    }
+
+    .hero .btn-outline {
+        margin-left: auto; /* Reset margin-left from desktop */
+    }
+
+    .hero .btn:last-child {
+        margin-bottom: 0;
+    }
+
+    .map-container {
+        height: 400px;
+    }
+
+    .splide__slide {
+        height: 300px;
+    }
+
+    .equipment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .equipment-img {
+        height: 150px;
+    }
+
+    .footer-content {
+        padding: 0 1rem;
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards;
+}
+
+.fade-in:nth-child(1) { animation-delay: 0.2s; }
+.fade-in:nth-child(2) { animation-delay: 0.4s; }
+.fade-in:nth-child(3) { animation-delay: 0.6s; }
+.fade-in:nth-child(4) { animation-delay: 0.8s; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.slide-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.gallery-container {
+    padding-top: 100px;
+    padding-bottom: 80px;
+}
+
+.gallery-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.gallery-header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 300px;
+    cursor: pointer;
+    background-color: var(--dark-card);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-item .pannellum-placeholder {
+     width: 100%;
+     height: 100%;
+     background-color: rgba(30, 30, 30, 0.8);
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     font-size: 1rem;
+     color: var(--text-secondary);
+     text-align: center;
+     padding: 1rem;
+     box-sizing: border-box;
+     line-height: 1.4;
+     position: relative;
+     z-index: 2;
+     transition: background-color 0.3s;
+}
+
+.gallery-item:hover .pannellum-placeholder {
+     background-color: rgba(45, 45, 45, 0.9);
+}
+
+.gallery-item .pannellum-placeholder i {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary);
+}
+
+.gallery-item .gallery-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 1rem;
+    color: white;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.gallery-item h4 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.gallery-item p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Lightbox Navigation Arrows */
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    padding: 10px 15px;
+    cursor: pointer;
+    z-index: 1001; /* Above lightbox content, below close button if it's higher */
+    border-radius: 3px;
+    transition: background-color 0.3s;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-prev {
+    left: 15px;
+}
+
+.lightbox-next {
+    right: 15px;
+}
+
+.lightbox-close { /* Ensure close button is on top */
+    z-index: 1002;
+}
+
+
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    .gallery-item {
+        height: 250px;
+    }
+}
+
+#panorama-viewer-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#panorama {
+    width: 100%;
+    height: 100%;
+}
+
+.pannellum-viewer-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent);
+    z-index: 10;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.pannellum-viewer-header .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.pnlm-controls-container {
+    top: 60px !important;
+}
+
+.legend-description {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.legend-description h4 {
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+.legend-description ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.legend-description li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+.legend-description i {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.leaflet-popup-content-wrapper {
+     background: var(--dark-card) !important;
+     color: var(--text-primary) !important;
+     border-radius: 8px !important;
+     box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+}
+.leaflet-popup-content {
+     margin: 15px !important;
+     line-height: 1.5;
+}
+.leaflet-popup-content h3 {
+     color: var(--primary);
+     margin-top: 0;
+     margin-bottom: 10px;
+     font-size: 1.3rem;
+}
+.leaflet-popup-content p {
+     margin: 5px 0;
+     color: var(--text-secondary);
+}
+.leaflet-popup-content strong {
+     color: var(--text-primary);
+}
+.leaflet-popup-content hr {
+     border: none;
+     height: 1px;
+     background-color: rgba(255, 255, 255, 0.1);
+     margin: 8px 0;
+}
+.leaflet-popup-tip {
+     background: var(--dark-card) !important;
+}
+.leaflet-popup-close-button {
+    color: var(--text-secondary) !important;
+    font-size: 1.2rem !important;
+    padding: 4px 4px 0 0 !important;
+}
+.leaflet-popup-close-button:hover {
+    color: var(--text-primary) !important;
+    background: transparent !important;
+}
+
+.info.legend {
+    background-color: rgba(30, 30, 30, 0.9);
+    padding: 8px; /* Reduced padding for compact non-hover state */
+    border-radius: 5px;
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    font-size: 0.9rem;
+    /* min-width removed from default state */
+    transition: min-width 0.3s ease-out, padding 0.3s ease-out; /* Added transition */
+}
+
+.info.legend:hover {
+    min-width: 230px; /* Apply min-width only on hover */
+    padding: 10px 15px; /* Restore original padding on hover */
+}
+.info.legend strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--primary);
+    font-size: 1rem;
+}
+.info.legend i {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    margin-right: 5px;
+    border-radius: 50%;
+    vertical-align: middle;
+    border: 1px solid rgba(0,0,0,0.2);
+}
+
+/* Collapsible Legend Styles */
+.legend-header {
+    padding: 0 !important; /* Remove padding */
+    cursor: pointer;
+    display: flex;
+    justify-content: center; /* Center the icon */
+    align-items: center;
+    background-color: transparent !important; /* Remove background */
+    background: transparent !important; /* Ensure override */
+    border: none !important; /* Remove border */
+    border-bottom: none !important; /* Ensure override */
+    width: auto; /* Adjust width to content */
+    height: auto; /* Adjust height to content */
+    box-sizing: border-box;
+    border-radius: 0 !important; /* Remove border-radius */
+    box-shadow: none !important; /* Remove any potential box-shadow from other rules */
+}
+
+/* Remove strong tag styling as text is removed */
+/* .legend-header strong {
+    color: var(--primary);
+} */
+
+/* Style for the Material Icon span */
+.legend-icon-span.material-icons {
+    color: var(--text-primary);
+    font-size: 1.2rem; /* Match fullscreen icon size */
+    transition: transform 0.3s ease;
+    display: inline-flex; /* Helps with alignment and sizing */
+    align-items: center; /* Vertically center icon if needed */
+    justify-content: center; /* Horizontally center icon if needed */
+    width: auto; /* Adjust as needed, or match button */
+    height: auto; /* Adjust as needed, or match button */
+}
+
+.legend-header.collapsed .legend-icon-span.material-icons {
+    /* Optional: Add rotation or different icon for collapsed state if desired */
+    /* transform: rotate(0deg); */
+}
+
+.legend-header:not(.collapsed) .legend-icon-span.material-icons {
+    /* Optional: Add rotation or different icon for expanded state if desired */
+    /* transform: rotate(180deg); */
+}
+
+
+.legend-content {
+    padding: 10px 15px; /* Keep original padding for content */
+    background-color: rgba(30, 30, 30, 0.9); /* Original background */
+    max-height: 300px; /* Prevent excessive height on mobile */
+    overflow-y: auto;   /* Allow scrolling if content exceeds max-height */
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out; /* Smooth transition */
+}
+
+.legend-content.collapsed {
+    display: none; /* Hide content when collapsed */
+    padding-top: 0;
+    padding-bottom: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+
+/* Adjustments for mobile legend */
+@media (max-width: 768px) {
+    .info.legend {
+        max-width: 250px; /* Limit width on mobile */
+        right: 0;      /* Position from right, relative to parent .leaflet-control */
+        bottom: 0;     /* Align to bottom right, relative to parent .leaflet-control */
+        left: auto; /* Ensure it's not pushed from left */
+        top: auto; /* Ensure it's not pushed from top */
+    }
+    .legend-content {
+        max-height: 200px; /* Shorter max-height on mobile */
+    }
+
+    #contactForm .form-grid {
+        grid-template-columns: 1fr; /* Stack inputs vertically on mobile */
+    }
+}
+
+
+.pnlm-hotspot.sqm-hotspot {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.pnlm-hotspot.sqm-hotspot:hover {
+    transform: scale(1.6);
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Redundant styles for #featuredPolarPlotContainer removed, now uses .chart-container class */
+/* Explicitly constrain SVG within the polar plot container */
+#featuredPolarPlotContainer svg {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Redundant? but ensures block behavior */
+    margin: auto; /* Center if container is somehow wider */
+}
+
+/* Style for D3 tooltip (from data-viewer.html) */
+.d3-tooltip {
+    position: absolute;
+    z-index: 10;
+    visibility: hidden;
+    background: rgba(0,0,0,0.8); /* Slightly darker */
+    color: #fff;
+    padding: 10px; /* More padding */
+    border-radius: 4px;
+    font-size: 13px; /* Slightly larger font */
+    pointer-events: none; /* Prevent tooltip from blocking mouse events */
+    white-space: nowrap; /* Prevent line breaks */
+    line-height: 1.4;
+}
+
+.pnlm-tooltip {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 5px 10px !important;
+    font-size: 0.9em !important;
+}
+
+.sqm-hotspot span {
+    white-space: nowrap;
+    line-height: 1.4;
+    text-align: center;
+    display: inline-block;
+  }
+
+/* Contact Form Styles */
+#contactForm {
+    max-width: 600px;
+    margin: 2rem auto 0;
+}
+
+#contactForm .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+#contactForm input[type="text"],
+#contactForm input[type="email"],
+#contactForm textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    box-sizing: border-box; /* Ensure padding doesn't add to width */
+}
+
+#contactForm textarea {
+    margin-bottom: 1rem;
+    resize: vertical; /* Allow vertical resize */
+}
+
+/* Enhancements for SQM Color Guide Legend - START */
+/* These styles augment or override existing .legend-description styles */
+
+.legend-description ul { /* Existing rule at or around line 778 */
+}
+
+.legend-description li { /* Existing rule at or around line 783 */
+    margin-bottom: 0.75rem !important; /* Increased bottom margin for more space */
+    display: flex !important;
+    align-items: flex-start !important; /* Align items to the start for better wrapping */
+    line-height: 1.4 !important; /* Improve line height for wrapped text */
+}
+
+.legend-description li i { /* Targets the color swatch icon, existing rule around line 788 */
+    width: 15px !important;
+    height: 15px !important;
+    display: inline-block !important;
+    margin-right: 10px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+    margin-top: 0.2em !important; /* Align swatch better with the first line of text */
+}
+
+.legend-description li strong {
+    display: inline-block !important; /* Allow margin-right */
+    margin-right: 0.25em !important; /* Add small space after the colon part */
+}
+
+/* Mobile specific adjustments for legend items */
+@media (max-width: 480px) {
+    .legend-description li {
+        font-size: 0.85rem !important; /* Slightly smaller font on very small screens */
+    }
+    .legend-description li i {
+        margin-top: 0.15em !important;
+    }
+}
+/* Enhancements for SQM Color Guide Legend - END */
+
+/* Leaflet Zoom Control Customization */
+.leaflet-control-zoom a {
+    background-color: rgba(45, 45, 45, 0.85) !important; /* Dark grey background */
+    color: #bbb !important; /* Light grey icon color */
+    border-bottom: 1px solid rgba(0,0,0,0.3) !important; /* Subtle border */
+    border-radius: 4px !important; /* Match other controls */
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+}
+.leaflet-control-zoom a:hover {
+    background-color: rgba(60, 60, 60, 0.95) !important;
+    color: #fff !important;
+}
+.leaflet-control-zoom-in {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+.leaflet-control-zoom-out {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom: none !important; /* Remove bottom border for the last button */
+}
+
+.leaflet-bar a, .leaflet-bar a:hover {
+    width: 30px !important; /* Standard width */
+    height: 30px !important; /* Standard height */
+    line-height: 30px !important; /* Center icon */
+}
+
+/* Custom Styles for Leaflet Layer Control */
+.leaflet-control-layers {
+    background-color: var(--dark-card) !important;
+    padding: 10px !important;
+    border-radius: 5px !important;
+    color: var(--text-primary) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+    line-height: 1.5;
+}
+
+.leaflet-control-layers-toggle {
+    font-family: 'Material Icons';
+    font-size: 20px !important; /* Adjust icon size */
+    line-height: 20px !important; /* Center icon vertically */
+    text-align: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    background-color: rgba(45, 45, 45, 0.85) !important;
+    border-radius: 4px !important;
+    color: var(--text-primary) !important;
+    text-decoration: none !important;
+}
+
+.leaflet-control-layers-toggle::before {
+    content: "layers"; /* Material Icon name */
+}
+
+.leaflet-control-layers-toggle:hover {
+    background-color: rgba(60, 60, 60, 0.95) !important;
+    color: var(--primary) !important;
+}
+
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+    background-color: var(--dark-bg) !important; /* Background for the expanded list */
+    padding: 8px !important;
+    border-radius: 4px !important;
+    color: var(--text-primary) !important;
+}
+
+.leaflet-control-layers-selector {
+    margin-right: 5px !important;
+    vertical-align: middle !important;
+}
+
+.leaflet-control-layers label {
+    color: var(--text-secondary) !important;
+    font-size: 0.95rem !important;
+    display: flex !important; /* Use flex for alignment */
+    align-items: center !important; /* Vertically align items */
+    margin-bottom: 4px !important; /* Space between layer items */
+}
+.leaflet-control-layers label span {
+    padding-left: 4px; /* Space between checkbox/radio and text */
+}
+
+
+.leaflet-control-layers-separator {
+    height: 1px !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    margin: 5px 0 !important;
+}
+
+/* Positioning the layer control */
+.leaflet-bottom.leaflet-right .leaflet-control-layers {
+    margin-bottom: 10px; /* Default margin from bottom */
+}
+
+/* Ensure it's above the .info.legend if both are in bottomright */
+.leaflet-bottom.leaflet-right {
+    display: flex;
+    flex-direction: column; /* Controls are added top-to-bottom in this corner */
+    align-items: flex-end;
+}
+
+/* General styling for all controls in bottom right for consistent spacing */
+.leaflet-bottom.leaflet-right .leaflet-control {
+    margin-top: 5px; /* Space between controls */
+    margin-right: 10px; /* Consistent margin from right edge */
+    margin-bottom: 5px; /* Consistent margin from bottom edge or next control */
+}
+.leaflet-bottom.leaflet-right .leaflet-control:first-child {
+    margin-top: 10px; /* More margin for the topmost control in this corner */
+}
+.leaflet-bottom.leaflet-right .leaflet-control:last-child {
+     margin-bottom: 10px; /* More margin for the bottom-most control */
+}
+
+
+/* Specific order and spacing for layer control and legend */
+/* The .info.legend is already set to position: 'bottomright' in JS */
+/* The .leaflet-control-layers is also set to position: 'bottomright' in JS */
+/* We want layers control above the info legend */
+
+.leaflet-control-layers.leaflet-control { /* Higher specificity for layer control */
+    order: 1; /* Comes before legend */
+    margin-bottom: 5px !important; /* Space below layer control, above legend */
+}
+
+.info.legend.leaflet-control { /* Higher specificity for info legend */
+    order: 2; /* Comes after layer control */
+    margin-top: 0px !important; /* Remove extra top margin if it's below layers */
+    margin-bottom: 10px !important; /* Ensure it's off the very bottom edge */
+}
+
+
+/* Legend on Hover */
+.info.legend .legend-content {
+    display: none;
+    opacity: 0;
+    max-height: 0;
+    transition: opacity 0.3s ease-out, max-height 0.3s ease-out, padding 0.3s ease-out;
+    overflow: hidden; /* Important for max-height transition */
+}
+
+.info.legend:hover .legend-content {
+    display: block;
+    opacity: 1;
+    max-height: 300px; /* Or a suitable max height */
+    /* padding restored by .legend-content rule if it was set to 0 when collapsed */
+}
+
+.info.legend .legend-header {
+    /* Ensure the header itself is styled consistently if it was relying on .leaflet-control-layers-toggle */
+    /* Most styles for legend-header are already fine, just ensure cursor */
+    cursor: default; /* No longer a click target for expansion */
+}
+
+
+/* Adjustments for mobile if necessary */
+@media (max-width: 768px) {
+    .leaflet-control-layers {
+        max-width: 180px; /* Slightly reduce max-width on mobile */
+        font-size: 0.85rem; /* Slightly smaller font for layer items */
+    }
+
+    .leaflet-bottom.leaflet-right .leaflet-control {
+        margin-right: 5px !important; /* Reduce right margin */
+        margin-left: 5px !important; /* Add left margin for very narrow screens if controls stack weirdly */
+        /* margin-top and margin-bottom are handled by the flex container's gap or individual control margins */
+    }
+
+    .leaflet-bottom.leaflet-right {
+        /* Override desktop flex settings if needed, or add gap */
+        gap: 12px; /* Increased gap between flex items (controls) */
+        /* Ensure padding from the edge of the map container if not already handled by .leaflet-right */
+        padding-bottom: 10px; /* Match top spacing of fullscreen icon */
+        padding-right: 5px; /* Reverted to original padding */
+    }
+
+    /* Explicitly set margins for the controls in mobile view if gap isn't enough or for specific ordering */
+    .leaflet-control-layers.leaflet-control {
+        margin-bottom: 0 !important; /* Rely on flex gap for spacing below */
+        margin-top: 0 !important; /* Rely on flex gap for spacing above */
+        /* Layer control is already sized by its toggle */
+    }
+
+    .info.legend.leaflet-control {
+        margin-bottom: 0 !important; /* Rely on flex gap or container padding */
+        margin-top: 0 !important; /* Rely on flex gap */
+        max-width: 180px; /* Match layer control width */
+    }
+
+    .legend-content { /* From main legend styles, ensure it's also constrained on mobile */
+        max-height: 150px; /* Shorter max-height for legend content on mobile */
+    }
+    /* Mobile styles for .overlay-controls and #lpOverlayOpacitySlider removed as the element is removed from HTML */
+}
+
+/* Opacity Slider Styles (These will be repurposed or new styles created for in-control slider) */
+/* Removing old styles for now, new ones will be more specific to the Leaflet control */
+
+/* Styles for Opacity Slider inside Leaflet Control */
+.leaflet-control-layers-custom-item {
+    padding: 4px 0px 4px 5px; /* Align with checkbox/radio padding */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between slider and value display */
+}
+
+.opacity-slider-container {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Take full width available in that section */
+    padding-left: 10px; /* Indent it slightly under its layer name */
+    margin-top: 2px; /* Small space above the slider */
+    margin-bottom: 4px; /* Space below slider */
+}
+
+.opacity-slider-input {
+    -webkit-appearance: none;
+    appearance: none;
+    flex-grow: 1; /* Slider takes available space */
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2); /* Lighter track for visibility */
+    outline: none;
+    opacity: 0.9;
+    transition: opacity .15s ease-in-out;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.opacity-slider-input:hover {
+    opacity: 1;
+}
+
+.opacity-slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 2px solid var(--dark-bg); /* Use main dark background for border */
+    cursor: pointer;
+}
+
+.opacity-slider-input::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 2px solid var(--dark-bg);
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.opacity-slider-value {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    min-width: 40px; /* Ensure space for "100%" */
+    /* text-align: right; */ /* Removed to allow flex gap to manage spacing */
+}
+
+
+/* Visually hidden class for labels if needed */
+.sr-only {
+ border: 0 !important;
+ clip: rect(1px, 1px, 1px, 1px) !important; /* 1 */
+ -webkit-clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important;  /* 2 */
+ height: 1px !important;
+ margin: -1px !important;
+ overflow: hidden !important;
+ padding: 0 !important;
+ position: absolute !important;
+ width: 1px !important;
+ white-space: nowrap !important;            /* 3 */
+}
+
+/* Mitigate tile seams for the Europe LP layer */
+.europe-lp-tiles .leaflet-tile {
+ outline: 1px solid transparent;
+}
+
+/* Sky Comparison Section Styles */
+.sky-comparison-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sky-comparison-container h5 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.sky-comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+.sky-image-card {
+    background-color: rgba(255, 255, 255, 0.03); /* Subtle background */
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.sky-image-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.sky-image-card img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sky-image-caption h6 {
+    margin: 0.5rem 0 0.3rem 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.sky-image-caption p {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.sky-comparison-container > p { /* The concluding paragraph */
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 1.5rem;
+    line-height: 1.5;
+}
+
+/* Responsive adjustments for sky comparison */
+@media (max-width: 768px) {
+    .sky-comparison-grid {
+        grid-template-columns: 1fr; /* Stack images on smaller screens */
+        gap: 1.5rem; /* Keep consistent gap */
+    }
+
+    .sky-comparison-container h5 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .sky-image-card {
+        padding: 0.75rem;
+    }
+}
+
+/* Dropdown Navigation */
+.nav-links li.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-links .dropdown .dropbtn {
+  cursor: pointer;
+  display: flex; /* Aligns icon with text */
+  align-items: center; /* Aligns icon with text */
+}
+
+.nav-links .dropdown .dropbtn .fa-caret-down {
+  margin-left: 5px;
+  transition: transform 0.3s ease;
+}
+
+.nav-links .dropdown:hover .dropbtn .fa-caret-down {
+  transform: rotate(180deg);
+}
+
+.nav-links .dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--dark-bg); /* Match header background or choose a suitable color */
+  min-width: 180px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.3);
+  z-index: 100; /* Ensure it's above other content */
+  border-radius: 0 0 4px 4px; /* Optional: rounded corners for bottom */
+  padding: 0; /* Remove padding if list items have their own */
+  margin-top: 0; /* Align directly below parent */
+}
+
+.nav-links .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.nav-links .dropdown .dropdown-content a {
+  color: var(--text-primary);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Subtle separator */
+}
+
+.nav-links .dropdown .dropdown-content a:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+.nav-links .dropdown .dropdown-content a:hover {
+  background-color: var(--primary); /* Use primary color for hover */
+  color: var(--dark-bg); /* Adjust text color for contrast on hover */
+}
+
+/* Ensure dropdown works on mobile/active state */
+.nav-links.active .dropdown .dropdown-content {
+    position: static; /* Change position for mobile flow */
+    box-shadow: none;
+    background-color: transparent; /* Blend with mobile menu */
+}
+
+.nav-links.active .dropdown .dropdown-content a {
+    padding-left: 25px; /* Indent dropdown items in mobile */
+    color: var(--text-primary); /* Ensure text color is consistent */
+}
+
+.nav-links.active .dropdown .dropdown-content a:hover {
+    background-color: var(--primary-hover); /* Use a hover color suitable for mobile */
+    color: var(--dark-bg);
+}
+
+/* Language Switcher Dropdown Styles */
+.nav-links .language-switcher-btn {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.nav-links .language-switcher-btn .material-icons {
+    margin-right: 5px; /* Space between icon and text */
+    font-size: 20px; /* Adjust icon size if needed */
+}
+
+.nav-links .language-switcher-btn #currentLangDisplay {
+    margin-right: 5px; /* Space between text and caret */
+}
+
+/* Style for the astro gallery grid */
+.astro-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.astro-gallery-item {
+    background-color: var(--dark-card);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.astro-gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.astro-gallery-item img {
+    width: 100%;
+    height: 200px; /* Fixed height for previews */
+    object-fit: cover; /* Crop images to fit */
+    display: block;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.astro-gallery-info {
+    padding: 1rem;
+}
+
+.astro-gallery-info h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.astro-gallery-info p {
+    margin-bottom: 0.25rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Lightbox styles (Reverted to simple static image display) */
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85); /* Original overlay darkness */
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox-overlay.visible {
+  display: flex;
+  opacity: 1;
+}
+
+.lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #111; /* Dark background for the image container */
+  padding: 20px; /* Increased padding */
+  border-radius: 5px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.7);
+  text-align: center; /* Center content like caption and button */
+}
+
+/* img is now directly inside .lightbox-content, ensure it's styled correctly */
+/* .lightbox-content img is handled by inline styles in JS for max-width/max-height */
+
+.lightbox-caption {
+  color: #ccc;
+  text-align: center;
+  margin-top: 10px; /* Original margin */
+  font-size: 0.9rem;
+}
+
+.lightbox-osd-link {
+  /* Using .btn styles from earlier in the file, can add specifics here if needed */
+  margin-top: 15px !important; /* Ensure spacing, !important if needed */
+  display: inline-block !important; /* Ensure it behaves like a button */
+  text-decoration: none; /* Remove underline from link if .btn doesn't cover it */
+}
+.lightbox-osd-link i {
+  margin-right: 8px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 15px; /* Positioned inside the lightbox content area */
+  right: 15px; /* Positioned inside the lightbox content area */
+  color: #fff;
+  background: var(--primary);
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 1001;
+}
+.lightbox-close:hover {
+  background: var(--primary-hover);
+}
+
+/* Remove OpenSeadragon specific overrides if they were added here */
+/* For example:
+.openseadragon-container { ... }
+.openseadragon-container .navigator { ... }
+*/

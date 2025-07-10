@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyArchive - Light Pollution Documentation</title>
+<meta name="description" content="SkyArchive is dedicated to documenting and raising awareness about light pollution through systematic night sky imaging, scientific measurements, and visual storytelling. Explore interactive maps, 360° panoramas, and astrophotography.">
+    <meta property="og:title" content="SkyArchive - Light Pollution Documentation">
+    <meta property="og:description" content="SkyArchive is dedicated to documenting and raising awareness about light pollution through systematic night sky imaging, scientific measurements, and visual storytelling. Explore interactive maps, 360° panoramas, and astrophotography.">
+    <meta property="og:image" content="img/icons/SkyArchive_logo_bright.png">
+    <meta property="og:url" content="https://loichommel.github.io/skyarchive/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SkyArchive - Light Pollution Documentation">
+    <meta name="twitter:description" content="SkyArchive is dedicated to documenting and raising awareness about light pollution through systematic night sky imaging, scientific measurements, and visual storytelling.">
+    <meta name="twitter:image" content="img/icons/SkyArchive_logo_bright.png">
+<link rel="apple-touch-icon" sizes="180x180" href="img/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png">
+    <link rel="manifest" href="img/icons/site.webmanifest">
+    <link rel="shortcut icon" href="img/icons/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <section class="hero">
+        <div class="container">
+            <h1 class="fade-in" data-translate-key="hero.title">Archiving the <span class="br-mobile"></span>Night Sky for <span class="br-mobile"></span>Future Generations</h1>
+            <p class="fade-in" data-translate-key="hero.subtitle">Documenting the disappearance of our night skies through panoramic photography and scientific measurements</p>
+            <a href="#map" class="btn fade-in" data-translate-key="hero.button.exploreMap">Explore the Map</a>
+            <a href="#panoramas" class="btn btn-outline fade-in" data-translate-key="hero.button.viewPanoramas">View Panoramas</a>
+        </div>
+    </section>
+
+    <section id="about" class="slide-up">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-translate-key="about.title">Mission Statement</h2>
+                <p data-translate-key="about.description">SkyArchive is dedicated to documenting and raising awareness about light pollution through systematic night sky imaging, scientific measurements, and visual storytelling.</p>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-bullseye"></i> <span data-translate-key="about.goals.title">Project Goals</span></h3>
+                    <p data-translate-key="about.goals.description">SkyArchive aims to create a comprehensive and interactive global database and archive of night sky observations—documenting the beauty of the night and how light pollution impacts our ability to see stars and celestial objects.</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-camera"></i> <span data-translate-key="about.methodology.title">Methodology</span></h3>
+                    <p data-translate-key="about.methodology.description">360° panoramas and sky brightness measurements are collected using a custom imaging and photometric system, ensuring consistency and scientific integrity across all locations.</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-chart-line"></i> <span data-translate-key="about.processing.title">Data Processing</span></h3>
+                    <p data-translate-key="about.processing.description">Images are processed using a standardized workflow for visual accuracy and stitched into seamless panoramas. These are presented interactively on the SkyArchive website.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="map" class="slide-up">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-translate-key="map.title">Interactive Database Map</h2>
+                <p data-translate-key="map.description">Explore an ever-growing archive through our interactive map, where each location includes a high-resolution panorama and corresponding light pollution data.<br>Panoramas are linked via interactive "gateway points," allowing users to seamlessly jump between nearby locations—similar to Google Street View, but focused entirely on the night sky.</p>
+            </div>
+            <div class="map-container">
+                <div id="lightPollutionMap"></div>
+                <button id="map-fullscreen-btn" class="btn map-control-btn" title="Toggle Fullscreen Map" data-translate-key="map.fullscreenButton.title" data-translate-attr="title">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+            <div class="card" style="margin-top: 2rem;">
+                <h3 data-translate-key="map.legend.title">Map Legend & Info</h3>
+                <p data-translate-key="map.legend.description1">
+                    Click on any colored marker on the map to see details about the location, including the calculated median Sky Quality Meter (SQM) reading (from measurements > 45° altitude) and the date. If multiple panoramas exist for a location, you'll be able to choose which one to view. Use the <i class="fas fa-plus"></i> / <i class="fas fa-minus"></i> buttons or scroll/pinch to zoom.
+                </p>
+                <p data-translate-key="map.legend.description2">
+                    This map is based on raw data kindly provided by David Lorenz, who recalculated Pierantonio Cinzano's original atlas using newer VIIRS data.
+                </p>
+                <div class="legend-description">
+                    <h4 data-translate-key="map.legend.sqmColorGuide">SQM Color Guide (mag/arcsec²):</h4>
+                    <ul>
+                        <li><i style="background:#000000; border: 1px solid #CCCCCC;">&nbsp;</i> <span style="white-space: nowrap;"><strong>≥ 21.76:&nbsp;</strong></span><span data-translate-key="map.legend.class1">Class 1 - Excellent Dark Sky Site</span></li>
+                        <li><i style="background:#4D4D4D;">&nbsp;</i> <span style="white-space: nowrap;"><strong>21.6 – 21.75:&nbsp;</strong></span><span data-translate-key="map.legend.class2">Class 2 - Typical Truly Dark Site</span></li>
+                        <li><i style="background:#1F3A75;">&nbsp;</i> <span style="white-space: nowrap;"><strong>21.3 – 21.6:&nbsp;</strong></span><span data-translate-key="map.legend.class3">Class 3 - Rural Sky</span></li>
+                        <li><i style="background:#004EB3;">&nbsp;</i> <span style="white-space: nowrap;"><strong>20.8 – 21.3:&nbsp;</strong></span><span data-translate-key="map.legend.class4">Class 4 - Brighter Rural Sky</span></li>
+                        <li><i style="background:#2E8A00;">&nbsp;</i> <span style="white-space: nowrap;"><strong>20.3 – 20.8:&nbsp;</strong></span><span data-translate-key="map.legend.class4_5">Class 4.5 - Semi-Suburban</span></li>
+                        <li><i style="background:#DADA00;">&nbsp;</i> <span style="white-space: nowrap;"><strong>19.25 – 20.3:&nbsp;</strong></span><span data-translate-key="map.legend.class5">Class 5 - Suburban Sky</span></li>
+                        <li><i style="background:#FF5600;">&nbsp;</i> <span style="white-space: nowrap;"><strong>18.5 – 19.25:&nbsp;</strong></span><span data-translate-key="map.legend.class6">Class 6 - Bright Suburban Sky</span></li>
+                        <li><i style="background:#DF73FF;">&nbsp;</i> <span style="white-space: nowrap;"><strong>18.0 – 18.5:&nbsp;</strong></span><span data-translate-key="map.legend.class7">Class 7 - Suburban/Urban</span></li>
+                        <li><i style="background:#E5C9FF;">&nbsp;</i> <span style="white-space: nowrap;"><strong>&lt; 18.0:&nbsp;</strong></span><span data-translate-key="map.legend.class8_9">Class 8/9 - City / Inner-City Sky</span></li>
+                    </ul>
+                     <p style="font-size: 0.9em; margin-top: 1rem;" data-translate-key="map.legend.sqmNote">Higher SQM values indicate darker skies. Colors correspond to color of the observation circles, not the color of the light pollution map.</p>
+                    <div class="sky-comparison-container">
+                        <h5 data-translate-key="map.skyComparison.title">Visualizing Sky Quality: Bortle Class Examples</h5>
+                        <div class="sky-comparison-grid">
+                            <div class="sky-image-card"
+                                 data-title="Muotathal, Schwyz, Switzerland"
+                                 data-date="2023-08-21"
+                                 data-panorama-url="img/panoramas/Switzerland/Schwyz/Muotathal/2023-08-21_46.995026N_008.8669337E/Pano1/2023-08-21_46.995026N_008.8669337E_Pano1_rectilinear_8k.jpg"
+                                 data-sqm-file-url="data/sqm_readings/Switzerland/Schwyz/Muotathal/2023-08-21_46.995026N_008.8669337E/Pano1/2023-08-21_46.995026N_008.8669337E_Pano1_SQM.txt"
+                                 data-latitude="46.995026"
+                                 data-longitude="8.8669337">
+                                <img src="img/content/Class_3_Sky.jpg" alt="Bortle Class 3 Sky - Pragelpass, Switzerland" data-translate-key="map.skyComparison.image1.alt" data-translate-attr="alt">
+                                <div class="sky-image-caption">
+                                    <h6 data-translate-key="map.skyComparison.image1.captionTitle">Bortle Class 3 (Rural Sky)</h6>
+                                    <p data-translate-key="map.skyComparison.image1.captionText">Pragelpass, Switzerland. Many stars and the Milky Way are clearly visible.</p>
+                                </div>
+                            </div>
+                            <div class="sky-image-card"
+                                 data-title="Sandweiler, Luxembourg, Luxembourg"
+                                 data-date="2023-08-17"
+                                 data-panorama-url="img/panoramas/Luxembourg/Luxembourg/Sandweiler/2023-08-17_49.621016N_006.220659E/Pano1/2023-08-17_49.621016N_006.220659E_Pano1_rectilinear_8k.jpg"
+                                 data-sqm-file-url="data/sqm_readings/Luxembourg/Luxembourg/Sandweiler/2023-08-17_49.621016N_006.220659E/Pano1/2023-08-17_49.621016N_006.220659E_Pano1_SQM.txt"
+                                 data-latitude="49.621016"
+                                 data-longitude="6.220659">
+                                <img src="img/content/Class_6_Sky.jpg" alt="Bortle Class 6 Sky - Sandweiler, Luxembourg" data-translate-key="map.skyComparison.image2.alt" data-translate-attr="alt">
+                                <div class="sky-image-caption">
+                                    <h6 data-translate-key="map.skyComparison.image2.captionTitle">Bortle Class 6 (Bright Suburban Sky)</h6>
+                                    <p data-translate-key="map.skyComparison.image2.captionText">Sandweiler, Luxembourg (near airport). Skyglow washes out stars and the Milky Way.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p data-translate-key="map.skyComparison.footer">These images illustrate the significant difference in night sky visibility under varying light pollution levels.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="panoramas" class="slide-up">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-translate-key="panoramas.featured.title">Featured Sky Panoramas</h2>
+                <p data-translate-key="panoramas.featured.description">Explore interactive 360° views of the night sky from various locations, revealing the impact of light pollution</p>
+            </div>
+            <div class="splide" aria-label="Sky Panoramas" data-translate-key="panoramas.featured.ariaLabel" data-translate-attr="aria-label">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <!-- Panorama slides are dynamically loaded here -->
+                    </ul>
+                </div>
+            </div>
+            <a href="panorama-gallery.html" class="view-gallery-link" style="font-size: 1.5em;" data-translate-key="panoramas.featured.galleryLink">Enter the Panorama Gallery →</a>
+        </div>
+    </section>
+
+    <section id="featured-astrophotos" class="slide-up">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-translate-key="astrophotos.featured.title">Featured Astrophotography</h2>
+                <p data-translate-key="astrophotos.featured.description">A glimpse into the wonders of the deep sky captured by SkyArchive.</p>
+            </div>
+            <div class="splide" id="astro-photo-splide" aria-label="Featured Astrophotography" data-translate-key="astrophotos.featured.ariaLabel" data-translate-attr="aria-label">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <!-- Astrophoto slides are dynamically loaded here -->
+                    </ul>
+                </div>
+            </div>
+            <a href="astro-gallery.html" class="view-gallery-link" style="font-size: 1.5em;" data-translate-key="astrophotos.featured.galleryLink">Enter the Astro Gallery →</a>
+        </div>
+    </section>
+
+    <section id="data" class="slide-up">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-translate-key="data.title">Scientific Data</h2>
+                <p data-translate-key="data.description">Quantitative measurements of night sky brightness using Sky Quality Meter (SQM) readings</p>
+            </div>
+            <div class="grid">
+                 <div class="card">
+                    <h3><i class="fas fa-moon"></i> <span data-translate-key="data.sqmMeasurements.title">SQM Measurements</span></h3>
+                    <p data-translate-key="data.sqmMeasurements.description">The Sky Quality Meter measures the brightness of the night sky in magnitudes per square arcsecond (mag/arcsec²). Higher values indicate darker skies:</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-lightbulb"></i> <span data-translate-key="data.trends.title">Light Pollution Trends</span></h3>
+                    <p data-translate-key="data.trends.description1">Analysis of collected data shows potential trends in sky brightness changes over time. Continuous monitoring is crucial.</p>
+                    <p data-translate-key="data.trends.description2">This corresponds to a significant loss of visible stars compared to pristine conditions.</p>
+                </div>
+            </div>
+            <div class="data-visualization featured-histogram-section">
+                 <div class="card">
+                    <h3><i class="fas fa-chart-bar"></i> <span data-translate-key="data.histogram.title">SQM Data Distribution for Featured Locations</span></h3>
+                    <p data-translate-key="data.histogram.description">Select one of the featured panoramas below to see the distribution of its associated Sky Quality Meter (SQM) measurements. This shows the range and frequency of sky brightness values recorded during the observation.</p>
+                    <div class="location-selector" style="margin-bottom: 1.5rem; margin-top: 1rem;">
+                        <label for="featuredLocationSelect" style="margin-right: 0.5rem; color: var(--text-secondary);" data-translate-key="data.histogram.selectLabel">Select Featured Location:</label>
+                        <select id="featuredLocationSelect" style="padding: 0.5rem; border-radius: 4px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                            <option value="" data-translate-key="data.histogram.selectLoadingOption">Loading featured locations...</option>
+                            <!-- Options are populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="chart-container" style="position: relative; height:350px; background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px;">
+                        <canvas id="featuredSqmHistogram"></canvas>
+                    </div>
+                    <p style="font-size: 0.9em; color: var(--text-secondary); margin-top: 1rem;" data-translate-key="data.histogram.footer">Histogram bins are 0.2 mag/arcsec² wide, covering 16.0 to 22.0. Values outside this range are grouped into '<16' and '>22' bins.</p>
+                </div>
+
+                <div id="featuredPolarPlotContainer" class="card featured-polar-plot-section" style="margin-top: 2rem; min-height: 550px; position: relative; overflow: hidden;">
+                     <h3><i class="fas fa-compass"></i> <span data-translate-key="data.polarPlot.title">SQM Data Polar Distribution</span></h3>
+                     <p data-translate-key="data.polarPlot.description">This plot shows the spatial distribution of the SQM measurements across the sky for the selected location. Points are plotted by altitude (distance from center, 90°=zenith) and azimuth (angle, N=0°). Color indicates SQM magnitude (brighter color = darker sky).</p>
+                     <div class="loading-message" id="polar-loading-indicator-main" style="display: none; padding-top: 40%;" data-translate-key="data.polarPlot.loading">
+                        <i class="fas fa-spinner fa-spin"></i>Loading Polar Plot Data...
+                     </div>
+                     <div class="error-message" id="polar-error-indicator-main" style="display: none; padding-top: 40%;" data-translate-key="data.polarPlot.error">
+                        Could not generate polar plot.
+                     </div>
+                     <!-- D3 SVG is appended here by JavaScript -->
+                </div>
+            </div>
+             </div>
+        </div>
+    </section>
+
+    <section id="equipment" class="slide-up">
+         <div class="container">
+            <div class="section-title">
+                <h2 data-translate-key="equipment.title">Equipment & Technology</h2>
+                <p data-translate-key="equipment.description">The specialized tools used to capture and analyze night sky data</p>
+            </div>
+            <div class="equipment-grid">
+                <div class="equipment-card">
+                    <div class="equipment-img">
+                        <img src="img/content/Panoramic_Imaging_System.jpg" alt="Panoramic Imaging System" data-translate-key="equipment.panoSystem.alt" data-translate-attr="alt">
+                    </div>
+                    <div class="equipment-info">
+                        <h3 data-translate-key="equipment.panoSystem.title">Panoramic Imaging System</h3>
+                        <p data-translate-key="equipment.panoSystem.description1">A custom-built motorized gimbal system captures high-resolution 360° night sky panoramas, currently using a Sony α6700 paired with a fast f/0.95 lens. Each panorama consists of dozens of overlapping RAW images taken with identical exposure settings for consistent, location-independent imaging quality.</p>
+                        <p data-translate-key="equipment.panoSystem.description2">This system enables precise documentation of sky visibility and artificial light interference across the entire celestial dome.</p>
+                    </div>
+                </div>
+                <div class="equipment-card">
+                    <div class="equipment-img">
+                        <img src="img/content/Motorized_SQM_System.jpg" alt="Motorized SQM System" data-translate-key="equipment.sqmSystem.alt" data-translate-attr="alt">
+                    </div>
+                    <div class="equipment-info">
+                        <h3 data-translate-key="equipment.sqmSystem.title">Motorized SQM System</h3>
+                        <p data-translate-key="equipment.sqmSystem.description1">The TAS (TESS AutoScan) is a motorized Sky Quality Meter that scans the sky at 145 angles, recording quantitative brightness values in mag/arcsec². These measurements are later overlaid on the panoramic images.</p>
+                        <p data-translate-key="equipment.sqmSystem.description2">The system provides accurate, objective data to complement and enhance the visual documentation.</p>
+                    </div>
+                </div>
+                <div class="equipment-card">
+                    <div class="equipment-img">
+                        <img src="img/content/Processing_Software.jpg" alt="Processing Software" data-translate-key="equipment.software.alt" data-translate-attr="alt">
+                    </div>
+                    <div class="equipment-info">
+                        <h3 data-translate-key="equipment.software.title">Processing Software</h3>
+                        <p data-translate-key="equipment.software.description1">RAW images are processed in RawTherapee using a custom profile developed specifically for SkyArchive, ensuring consistent and accurate visual results across all locations. Panoramas are stitched using Microsoft ICE.</p>
+                        <p data-translate-key="equipment.software.description2">Interactive views are rendered with Pannellum, while custom Python scripts handle data normalization and integration of sky brightness metrics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="slide-up">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-translate-key="contact.title">Get Involved</h2>
+                <p data-translate-key="contact.description">Contribute to the project or learn how to reduce light pollution in your community</p>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-hands-helping"></i> <span data-translate-key="contact.contribute.title">Contribute Data (Coming in the future)</span></h3>
+                    <p data-translate-key="contact.contribute.description">Are you documenting light pollution? We welcome contributions. Contact us for standardization guidelines.</p>
+                    <a href="mailto:contact@skyarchive.example.com" class="btn" style="margin-top: 1rem;" data-translate-key="contact.contribute.button">Submission Guidelines</a>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-lightbulb"></i> <span data-translate-key="contact.advocacy.title">Dark Sky Advocacy</span></h3>
+                    <p data-translate-key="contact.advocacy.description">Learn how to advocate for responsible lighting policies. We provide resources and guidance.</p>
+                    <a href="https://www.darksky.org" target="_blank" rel="noopener noreferrer" class="btn" style="margin-top: 1rem;" data-translate-key="contact.advocacy.button">Advocacy Resources</a>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 2rem; text-align: center;">
+                <h3 data-translate-key="contact.team.title">Contact the Project Team</h3>
+                <p data-translate-key="contact.team.description">Have questions or want to collaborate? Reach out to us:</p>
+                <a href="mailto:loic.hommel@outlook.com?subject=SkyArchive%20Inquiry" class="btn" style="margin-top: 1rem; display: inline-block;" data-translate-key="contact.team.button">Send us an Email</a>
+            </div>
+        </div>
+    </section>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/services/dataService.js"></script>
+    <script src="js/services/mapService.js"></script>
+    <script src="js/services/galleryService.js"></script>
+    <script src="js/services/uiUtils.js"></script>
+    <script src="js/services/visualizationService.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Load Header
+        fetch('_header.html')
+            .then(response => response.text())
+            .then(data => {
+                const headerPlaceholder = document.getElementById('header-placeholder');
+                if (headerPlaceholder) {
+                    headerPlaceholder.innerHTML = data;
+                    
+                    // Re-initialize mobile menu
+                    if (typeof SkyArchiveUIUtils !== 'undefined' && SkyArchiveUIUtils.initMobileMenu) {
+                        SkyArchiveUIUtils.initMobileMenu();
+                    } else if (typeof initMobileMenu === 'function') { // Fallback if not on SkyArchiveUIUtils
+                        initMobileMenu();
+                    } else {
+                        // Direct initialization if other functions aren't available (basic version)
+                        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                        const navLinks = document.getElementById('navLinks');
+                        if (mobileMenuBtn && navLinks) {
+                            mobileMenuBtn.addEventListener('click', function() {
+                                navLinks.classList.toggle('active');
+                            });
+                        }
+                    }
+
+                    // Re-initialize language switcher event listener
+                    // Assumes `setLanguage` is globally available from script.js
+                    // `loadTranslations` and `updateLanguageSwitcherDisplay` are called by `setLanguage`
+                    // or by the main DOMContentLoaded listener in script.js for the initial page load.
+                    const languageDropdown = document.getElementById('languageDropdown');
+                    if (languageDropdown && typeof setLanguage === 'function') {
+                        languageDropdown.addEventListener('click', (event) => {
+                            if (event.target.tagName === 'A' && event.target.dataset.lang) {
+                                event.preventDefault();
+                                setLanguage(event.target.dataset.lang);
+                            }
+                        });
+                    }
+                     // After header is loaded, apply translations again to ensure header text is updated
+                    if (typeof applyTranslations === 'function') {
+                        applyTranslations();
+                    }
+                }
+            })
+            .catch(error => console.error('Error loading header:', error));
+
+        // Load Footer
+        fetch('_footer.html')
+            .then(response => response.text())
+            .then(data => {
+                const placeholder = document.getElementById('footer-placeholder');
+                if (placeholder) {
+                    placeholder.innerHTML = data;
+                    const scripts = placeholder.getElementsByTagName('script');
+                    for (let i = 0; i < scripts.length; i++) {
+                        const script = document.createElement('script');
+                        if (scripts[i].src) {
+                            script.src = scripts[i].src;
+                        } else {
+                            script.textContent = scripts[i].textContent;
+                        }
+                        document.body.appendChild(script).parentNode.removeChild(script);
+                    }
+                }
+            })
+            .catch(error => console.error('Error loading footer:', error));
+    </script>
+</body>
+</html>

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <title>Panorama Viewer - SkyArchive</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=vrpano" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="js/script.js"></script> <!-- Added js/script.js for translation functions -->
+  <style>
+    :root {
+      --hotspot-alpha: 0.25;
+      --gateway-color: rgba(0, 255, 255, 0.7);
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      background-color: #000;
+    }
+    #panorama-viewer-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    #panorama {
+      width: 100%;
+      height: 100%;
+    }
+    .pnlm-hotspot-base.sqm-hotspot {
+      background: rgba(255, 255, 255, var(--hotspot-alpha)) !important;
+      border-radius: 50% !important;
+      width: 10px !important;
+      height: 10px !important;
+      border: none !important;
+      background-image: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      box-shadow: 0 0 3px rgba(255, 255, 255, var(--hotspot-alpha));
+      transition: background-color 0.1s ease;
+    }
+
+    .custom-hotspot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: absolute;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: auto !important;
+        height: auto !important;
+    }
+
+    .hotspot-frame {
+        background: rgba(0, 0, 0, 0.6);
+        opacity: var(--hotspot-alpha);
+        color: white;
+        padding: 5px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: scale(var(--hotspot-distance-scale, 1));
+        transition: transform 0.3s, background 0.3s, color 0.3s, opacity 0.3s;
+    }
+
+    .custom-hotspot:hover .hotspot-frame {
+        transform: scale(1.3);
+        background: rgba(255, 255, 255, 1);
+        opacity: 1;
+        color: black;
+    }
+
+    .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-size: 24px;
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+        transition: transform 0.3s;
+        line-height: 1;
+        display: block;
+    }
+    .pnlm-tooltip {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        color: #fff !important;
+        border-radius: 4px !important;
+        padding: 8px 12px !important;
+        font-size: 0.9rem !important;
+        max-width: 250px;
+        white-space: normal !important;
+    }
+    .pnlm-tooltip span {
+        text-align: center !important;
+        display: block;
+    }
+
+    .pnlm-title-box small {
+        font-size: 0.75rem !important;
+        color: #ccc !important;
+        font-weight: normal !important;
+        line-height: 1.3 !important;
+    }
+
+    #viewer-ui-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    
+    #viewer-ui-overlay > * {
+      pointer-events: auto;
+      position: absolute;
+      background: rgba(255, 255, 255, 0.10);
+      padding: 8px 12px;
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.50);
+      font-size: 0.9rem;
+    }
+    #back-button-logo.logo {
+        top: 10px;
+        left: 15px;
+        z-index: 20;
+        padding: 5px 10px;
+        font-size: 1.2rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+    #back-button-logo.logo .logo-icon {
+        height: 28px;
+        margin-right: 6px;
+        opacity: 0.5;
+    }
+
+    #view-data-button {
+        top: 15px;
+        left: 190px;
+        display: none;
+        z-index: 20;
+    }
+
+    #settings-toggle-button {
+        top: 15px;
+        right: 15px;
+        z-index: 20;
+        padding: 8px 10px;
+    }
+
+    #settings-sidebar {
+        position: absolute;
+        top: 0;
+        right: -240px;
+        width: 220px;
+        height: 100%;
+        background: rgba(18, 18, 18, 0.95);
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        padding: 70px 15px 20px 15px;
+        box-sizing: border-box;
+        transition: right 0.3s ease-in-out;
+        z-index: 15;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    #settings-sidebar.open {
+        right: 0;
+    }
+    #settings-sidebar h3 {
+        color: var(--primary);
+        margin-top: 0;
+        margin-bottom: 25px;
+        text-align: center;
+        width: 100%;
+        font-size: 1.4rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    #settings-sidebar h3 .fas.fa-cog {
+        font-size: 1.3rem;
+    }
+
+    #settings-sidebar label#hotspot-opacity-label {
+      display: block;
+      text-align: center;
+      margin-bottom: 10px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      width: 100%;
+    }
+
+    .opacity-slider-container {
+        width: 100%;
+        margin-bottom: 25px;
+    }
+    
+    .slider-control-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 5px 2px;
+        box-sizing: border-box;
+    }
+
+    .slider-control-group .fas.fa-sun {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+        flex-shrink: 0;
+    }
+
+    #settings-sidebar input[type="range"]#hotspot-opacity-slider {
+      cursor: pointer;
+      flex-grow: 1;
+      width: 100%;
+      height: auto;
+      transform: none;
+      margin: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+    }
+    #settings-sidebar input[type="range"]#hotspot-opacity-slider::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    #settings-sidebar input[type="range"]#hotspot-opacity-slider::-moz-range-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+    #settings-sidebar input[type="range"]#hotspot-opacity-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      margin-top: -4px;
+      background: var(--primary);
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--dark-card);
+    }
+    #settings-sidebar input[type="range"]#hotspot-opacity-slider::-moz-range-thumb {
+      background: var(--primary);
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--dark-card);
+    }
+
+    #settings-sidebar #hotspot-opacity-value {
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.9);
+      min-width: 40px;
+      text-align: right;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    
+    #settings-sidebar #view-data-button {
+        margin-top: 15px;
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    #map-transition-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    #map-transition-overlay.visible {
+      display: flex;
+      opacity: 1;
+    }
+    #transition-map {
+      width: 80%;
+      height: 80%;
+      max-width: 1000px;
+      max-height: 700px;
+      border: 2px solid #555;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+    .leaflet-popup-content-wrapper {
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 4px;
+    }
+    .leaflet-popup-content {
+        margin: 10px;
+        font-size: 0.9rem;
+    }
+    .leaflet-popup-tip {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .pnlm-compass {
+        opacity: 0.5 !important;
+    }
+    .pnlm-compass:hover {
+        opacity: 1 !important;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="map-transition-overlay">
+    <div id="transition-map"></div>
+  </div>
+
+  <div id="panorama-viewer-container">
+    <div id="panorama" class="pnlm-container" tabindex="0">
+      <div id="loading-message-panorama" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center; font-size: 1.2rem; display: none;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i><br><span data-translate-key="viewer.loadingPanorama">Loading Panorama...</span>
+      </div>
+
+     <div id="viewer-ui-overlay">
+       <a href="index.html" id="back-button-logo" class="btn logo" title="Go back to SkyArchive homepage" data-translate-key="viewer.backButtonTitle" data-translate-attr="title">
+           <img src="img/icons/SkyArchive_logo_bright.png" alt="SkyArchive Logo" class="logo-icon">SkyArchive
+       </a>
+       <button id="settings-toggle-button" class="btn" title="Toggle Settings" data-translate-key="viewer.settingsButtonTitle" data-translate-attr="title">
+         <i class="fas fa-sliders-h"></i>
+       </button>
+
+       <div id="settings-sidebar">
+         <h3><i class="fas fa-cog"></i> <span data-translate-key="viewer.settings.title">Settings</span></h3>
+         <label for="hotspot-opacity-slider" id="hotspot-opacity-label" data-translate-key="viewer.settings.hotspotOpacityLabel">Hotspot Opacity</label>
+         <div class="opacity-slider-container">
+            <div class="slider-control-group" title="Adjust hotspot visibility"> <!-- This title might also need translation if deemed important -->
+              <i class="fas fa-sun"></i>
+              <input type="range" id="hotspot-opacity-slider" min="0" max="100" value="25" aria-labelledby="hotspot-opacity-label">
+              <span id="hotspot-opacity-value">25%</span>
+            </div>
+          </div>
+         <button id="view-data-button" class="btn" title="View SQM data distribution" style="margin-top: 20px; width: 100%; padding: 10px 15px; font-size: 0.9rem;" data-translate-key="viewer.settings.viewDataButtonTitle" data-translate-attr="title">
+           <i class="fas fa-chart-bar"></i> <span data-translate-key="viewer.settings.viewDataButton">View Data</span>
+         </button>
+         <a href="index.html#map" id="view-map-link" class="btn" title="Go to Interactive Map" style="margin-top: 10px; width: 100%; padding: 10px 15px; font-size: 0.9rem; text-align: center;" data-translate-key="viewer.settings.viewMapLinkTitle" data-translate-attr="title">
+           <i class="fas fa-map-marked-alt"></i> <span data-translate-key="viewer.settings.viewMapLink">View Map</span>
+         </a>
+       </div>
+     </div>
+   </div>
+ </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/services/dataService.js"></script>
+  <script>
+    // Helper functions
+    function degreesToRadians(degrees) {
+      return degrees * Math.PI / 180;
+    }
+
+    function radiansToDegrees(radians) {
+      return radians * 180 / Math.PI;
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radius of the Earth in km
+      const dLat = degreesToRadians(lat2 - lat1);
+      const dLon = degreesToRadians(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(degreesToRadians(lat1)) * Math.cos(degreesToRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c; // Distance in km
+    }
+
+    function calculateBearing(lat1, lon1, lat2, lon2) {
+      const phi1 = degreesToRadians(lat1);
+      const lambda1 = degreesToRadians(lon1);
+      const phi2 = degreesToRadians(lat2);
+      const lambda2 = degreesToRadians(lon2);
+      const y = Math.sin(lambda2 - lambda1) * Math.cos(phi2);
+      const x = Math.cos(phi1) * Math.sin(phi2) -
+                Math.sin(phi1) * Math.cos(phi2) * Math.cos(lambda2 - lambda1);
+      const theta = Math.atan2(y, x);
+      const bearing = (radiansToDegrees(theta) + 360) % 360; // Bearing in degrees
+      return bearing;
+    }
+
+    // Function to fetch location name from Nominatim (REMOVED - location names now sourced from manifest)
+
+    // --- Easing Function ---
+    // Example: easeInOutQuad
+    function easeInOutQuad(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    // calculateMedian is now available via SkyArchiveDataService.calculateMedian
+
+    // Simplified SQM fetcher just for median calculation
+    async function fetchAndParseSqmForMedian(sqmFileUrl) {
+        if (!sqmFileUrl) return null;
+        try {
+            const response = await fetch(sqmFileUrl);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const textData = await response.text();
+            const lines = textData.split('\n');
+            const sqmValuesForMedian = [];
+            let dataStarted = false;
+            for (const line of lines) {
+                if (!dataStarted) {
+                    if (!line.trim().startsWith('#') && line.trim().length > 0) dataStarted = true;
+                    else continue;
+                }
+                if (line.trim().length === 0) continue;
+                const columns = line.trim().split(/\s+/);
+                if (columns.length >= 9) {
+                    const mag = parseFloat(columns[5]);
+                    const alt = parseFloat(columns[7]);
+                    if (!isNaN(mag) && !isNaN(alt) && alt > 45) {
+                        sqmValuesForMedian.push(mag);
+                    }
+                }
+            }
+            // Use the global median calculation function
+            return SkyArchiveDataService.calculateMedian(sqmValuesForMedian);
+        } catch (error) {
+            console.error(`Error fetching/parsing SQM for median ${sqmFileUrl}:`, error);
+            return null;
+        }
+    }
+
+    // --- Custom Hotspot Creation Function (from example) ---
+    function hotspotWithIcon(hotSpotDiv, tooltipArgs) { // tooltipArgs is now an object { text: '...', scale: 0.5 }
+        // Create inner frame div
+        const frame = document.createElement('div');
+        frame.className = 'hotspot-frame';
+        // Use the specific icon name
+        frame.innerHTML = '<span class="material-symbols-outlined">vrpano</span>';
+        hotSpotDiv.appendChild(frame);
+
+        // Apply the distance-based scale
+        // Ensure scale is a valid number, default to 1 if not.
+        const scaleToApply = (typeof tooltipArgs.scale === 'number' && !isNaN(tooltipArgs.scale)) ? tooltipArgs.scale : 1;
+        hotSpotDiv.style.setProperty('--hotspot-distance-scale', scaleToApply);
+
+        // Create tooltip
+        const tooltip = document.createElement('div');
+        tooltip.style.position = 'absolute';
+        tooltip.style.bottom = 'calc(100% + 10px)';
+        tooltip.style.left = '50%';
+        tooltip.style.transform = 'translateX(-50%)';
+        tooltip.style.backgroundColor = 'rgba(0,0,0,0.8)';
+        tooltip.style.color = '#fff';
+        tooltip.style.padding = '8px 12px';
+        tooltip.style.borderRadius = '4px';
+        tooltip.style.whiteSpace = 'nowrap';
+        tooltip.style.display = 'none';
+        tooltip.style.fontSize = '0.9rem';
+        tooltip.style.zIndex = '1001';
+        tooltip.innerHTML = tooltipArgs.text; // Use text from args
+        hotSpotDiv.appendChild(tooltip);
+
+        // Accessibility
+        hotSpotDiv.setAttribute('role', 'button');
+        const simpleText = typeof tooltipArgs.text === 'string' ? tooltipArgs.text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : 'Gateway Hotspot';
+        hotSpotDiv.setAttribute('aria-label', simpleText);
+
+        // Show/hide tooltip on hover
+        hotSpotDiv.onmouseenter = function () {
+            tooltip.style.display = 'block';
+        };
+        hotSpotDiv.onmouseleave = function () {
+            tooltip.style.display = 'none';
+        };
+
+        hotSpotDiv.classList.add('pnlm-noclick');
+    }
+
+    // --- Hotspot Loading Functions ---
+
+    // Settings Sidebar Toggle
+    const settingsSidebar = document.getElementById('settings-sidebar');
+    const settingsToggleButton = document.getElementById('settings-toggle-button');
+    if (settingsToggleButton && settingsSidebar) {
+        settingsToggleButton.addEventListener('click', () => {
+            settingsSidebar.classList.toggle('open');
+            // Optional: Change icon on toggle
+            const icon = settingsToggleButton.querySelector('i');
+            if (settingsSidebar.classList.contains('open')) {
+                if (icon) icon.className = 'fas fa-times'; // Change to close icon
+            } else {
+                if (icon) icon.className = 'fas fa-sliders-h'; // Change back to settings icon
+            }
+        });
+    }
+
+    // Load SQM data, parse it, convert alt/az to pitch/yaw, and add hotspots.
+    async function loadSQMHotspots(viewer, sqmFileUrl) {
+      if (!sqmFileUrl) return;
+      try {
+        const response = await fetch(sqmFileUrl);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const textData = await response.text();
+        const lines = textData.split('\n');
+        let dataStarted = false;
+        for (const line of lines) {
+            if (!dataStarted) {
+                if (!line.trim().startsWith('#') && line.trim().length > 0) dataStarted = true;
+                else continue;
+            }
+            if (line.trim().length === 0) continue;
+            const cols = line.trim().split(/\s+/);
+            if (cols.length < 9) continue;
+
+            const date = cols[1];
+            const time = cols[2];
+            const mag = parseFloat(cols[5]);
+            const alt = parseFloat(cols[7]);
+            const azi = parseFloat(cols[8]);
+
+            if (!isNaN(mag) && !isNaN(alt) && !isNaN(azi)) {
+                const pitch = alt;
+                const yaw = azi;
+                const tooltipText = `<div style='text-align: center;'>SQM: <strong>${mag.toFixed(2)}</strong> mag/arcsec²<br>Alt: ${alt}° | Az: ${azi}°<br>${date} ${time}</div>`;
+                viewer.addHotSpot({
+                    pitch: pitch,
+                    yaw: yaw,
+                    type: "info",
+                    text: tooltipText,
+                    cssClass: "sqm-hotspot"
+                });
+            }
+        }
+      } catch (err) {
+        console.error("Error loading SQM hotspots:", err);
+      }
+    }
+
+    // Load Gateway Hotspots
+    async function loadGatewayHotspots(viewer, manifestData, currentPanoramaData) {
+        if (!currentPanoramaData || isNaN(currentPanoramaData.latitude) || isNaN(currentPanoramaData.longitude)) {
+            console.warn("Cannot load gateway hotspots: Current location data is invalid.");
+            return;
+        }
+
+        const currentLat = currentPanoramaData.latitude;
+        const currentLon = currentPanoramaData.longitude;
+
+        // 1. Filter potential gateways
+        const potentialGateways = manifestData.filter(targetData =>
+            targetData.panoramaUrl !== currentPanoramaData.panoramaUrl &&
+            !isNaN(targetData.latitude) && !isNaN(targetData.longitude) &&
+            targetData.panoramaUrl
+        );
+
+        // 1. Fetch all necessary data for each potential gateway
+        const gatewayInfoPromises = potentialGateways.map(async (targetData) => {
+            const targetLat = targetData.latitude;
+            const targetLon = targetData.longitude;
+            const distance = calculateDistance(currentLat, currentLon, targetLat, targetLon);
+            const bearing = calculateBearing(currentLat, currentLon, targetLat, targetLon);
+
+            // Fetch SQM median directly
+            const sqmResult = await fetchAndParseSqmForMedian(targetData.sqmFileUrl);
+            const medianSqm = sqmResult; // Directly use the result
+
+            // Construct location name from manifest data
+            let locationName = [targetData.locality, targetData.region, targetData.country].filter(Boolean).join(', ');
+            if (!locationName && targetData.latitude && targetData.longitude) { // Fallback to coordinates if primary fields are empty
+                locationName = `Lat: ${targetData.latitude.toFixed(3)}, Lon: ${targetData.longitude.toFixed(3)}`;
+            } else if (!locationName) {
+                locationName = "Unknown Location"; // Ultimate fallback
+            }
+
+            return { targetData, distance, bearing, medianSqm, locationName };
+        });
+
+        const settledGatewayInfo = await Promise.allSettled(gatewayInfoPromises);
+
+        const validGateways = settledGatewayInfo
+            .filter(result => result.status === 'fulfilled' && result.value)
+            .map(result => result.value);
+
+        if (validGateways.length === 0) {
+            console.log("No valid gateway data to process for hotspot scaling.");
+            console.timeEnd("loadGatewayHotspots");
+            return;
+        }
+
+        // 2. Determine min and max distances for scaling
+        let minDistance = Infinity;
+        let maxDistance = -Infinity;
+
+        if (validGateways.length > 0) {
+            validGateways.forEach(gw => {
+                if (gw.distance < minDistance) minDistance = gw.distance;
+                if (gw.distance > maxDistance) maxDistance = gw.distance;
+            });
+        }
+        // If only one gateway, or all at same distance, minDistance might equal maxDistance.
+        // The scaling logic below will handle this by defaulting to maxScale.
+
+        // 3. Add hotspots with calculated scales
+        const minScale = 0.33; // Furthest hotspot is 1/3th size
+        const maxScale = 1.0;   // Closest hotspot is full size
+        let hotspotsAdded = 0;
+
+        validGateways.forEach(gateway => {
+            const { targetData, distance, bearing, medianSqm, locationName } = gateway;
+            let scaleFactor = maxScale; // Default to max scale
+
+            if (maxDistance > minDistance) { // Avoid division by zero if all points are at the same distance
+                // Normalize distance: 0 for closest (minDistance), 1 for furthest (maxDistance)
+                const normalizedDistance = (distance - minDistance) / (maxDistance - minDistance);
+                // Linear interpolation: scale = maxScale - normalizedDistance * (rangeOfScale)
+                scaleFactor = maxScale - normalizedDistance * (maxScale - minScale);
+            } else if (validGateways.length === 1) {
+                 scaleFactor = maxScale; // Single hotspot gets max scale
+            }
+            // Clamp scaleFactor to ensure it's within [minScale, maxScale]
+            scaleFactor = Math.max(minScale, Math.min(maxScale, scaleFactor));
+
+            let tooltipText = `<div style='text-align: center;'>`;
+            tooltipText += `<strong>${locationName}</strong><br>`;
+            tooltipText += `Date: ${targetData.date || 'N/A'}<br>`;
+            tooltipText += `Median SQM: ${medianSqm ? medianSqm.toFixed(2) : 'N/A'}<br>`;
+            tooltipText += `Distance: ${distance.toFixed(1)} km</div>`;
+
+            const createClickHandler = (target, fetchedMedianSqm, locName) => {
+                return (event) => {
+                    event.stopPropagation();
+                    const targetLat = target.latitude;
+                    const targetLon = target.longitude;
+                    const startLat = currentPanoramaData.latitude;
+                    const startLon = currentPanoramaData.longitude;
+
+                    if (isNaN(startLat) || isNaN(startLon) || isNaN(targetLat) || isNaN(targetLon)) {
+                        console.error("Invalid coordinates for map transition. Navigating directly.");
+                        navigateToPanorama(target, fetchedMedianSqm, locName);
+                        return;
+                    }
+                    const overlay = document.getElementById('map-transition-overlay');
+                    let mapContainer = document.getElementById('transition-map'); // Use let
+                    overlay.classList.add('visible');
+
+                    if (mapContainer._leaflet_id) {
+                        const parent = mapContainer.parentNode;
+                        parent.removeChild(mapContainer);
+                        const newMapContainer = document.createElement('div');
+                        newMapContainer.id = 'transition-map';
+                        parent.appendChild(newMapContainer);
+                        mapContainer = newMapContainer;
+                    }
+
+                    try {
+                        const map = L.map(mapContainer, { attributionControl: false }).setView([(startLat + targetLat) / 2, (startLon + targetLon) / 2], 5);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                            maxZoom: 19,
+                            attribution: ''
+                        }).addTo(map);
+                        L.marker([startLat, startLon]).addTo(map).bindPopup("<b>Start:</b><br>Current Location").openPopup();
+                        L.marker([targetLat, targetLon]).addTo(map).bindPopup(`<b>Destination:</b><br>${locName || target.locality || 'Selected Location'}`).openPopup();
+                        const pathCoords = [[startLat, startLon], [targetLat, targetLon]];
+                        L.polyline(pathCoords, { color: 'grey', weight: 3, opacity: 0.6, dashArray: '5, 10' }).addTo(map);
+                        const bounds = L.latLngBounds(pathCoords);
+                        map.fitBounds(bounds, { padding: [70, 70] }); // Changed from flyToBounds
+                        const animationDurationSeconds = 3.5; // Keep for dot animation timing
+
+                        if (!document.getElementById('pulsing-marker-style')) {
+                            const styleSheet = document.createElement("style");
+                            styleSheet.id = 'pulsing-marker-style';
+                            styleSheet.innerText = `@keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 5px red; } 50% { transform: scale(1.2); box-shadow: 0 0 10px red; } 100% { transform: scale(1); box-shadow: 0 0 5px red; } }`;
+                            document.head.appendChild(styleSheet);
+                        }
+                        const movingDotIcon = L.divIcon({
+                            html: '<div style="background-color: red; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px red; animation: pulse 1s infinite;"></div>',
+                            className: 'moving-marker-icon', iconSize: [14, 14], iconAnchor: [7, 7]
+                        });
+                        const movingDotMarker = L.marker([startLat, startLon], { icon: movingDotIcon, zIndexOffset: 1000 }).addTo(map);
+                        let startTime = null;
+                        const animationDurationMillis = animationDurationSeconds * 1000;
+                        let animationFrameId = null;
+                        function animateDot(timestamp) {
+                            if (!startTime) startTime = timestamp;
+                            const elapsedTime = timestamp - startTime;
+                            if (elapsedTime >= animationDurationMillis) {
+                                movingDotMarker.setLatLng([targetLat, targetLon]); return;
+                            }
+                            const progress = elapsedTime / animationDurationMillis;
+                            const easedProgress = easeInOutQuad(progress);
+                            const currentDotLat = startLat + (targetLat - startLat) * easedProgress;
+                            const currentDotLon = startLon + (targetLon - startLon) * easedProgress;
+                            movingDotMarker.setLatLng([currentDotLat, currentDotLon]);
+                            animationFrameId = requestAnimationFrame(animateDot);
+                        }
+                        setTimeout(() => {
+                            const pathDistance = L.latLng(startLat, startLon).distanceTo(L.latLng(targetLat, targetLon));
+                            if (pathDistance > 0) {
+                                startTime = null; if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                                animationFrameId = requestAnimationFrame(animateDot);
+                            } else { movingDotMarker.setLatLng([targetLat, targetLon]); }
+                        }, 100);
+                        setTimeout(() => { navigateToPanorama(target, fetchedMedianSqm, locName); }, animationDurationSeconds * 1000);
+                    } catch (error) {
+                        console.error("Error initializing or animating map:", error);
+                        overlay.classList.remove('visible');
+                        navigateToPanorama(target, fetchedMedianSqm, locName);
+                    }
+                };
+            };
+
+            const navigateToPanorama = (target, fetchedMedianSqm, locName) => {
+                const params = new URLSearchParams();
+                params.set('panoramaUrl', target.panoramaUrl); // URL from new manifest
+                // Construct title for next page: prefer locName (from Nominatim/constructed), then locality, then default
+                const nextTitle = locName || target.locality || 'Panorama';
+                params.set('title', nextTitle);
+                if (target.date) params.set('date', target.date);
+                if (fetchedMedianSqm) params.set('sqm', fetchedMedianSqm.toFixed(2));
+                if (target.sqmFileUrl) params.set('sqmFileUrl', target.sqmFileUrl);
+                if (target.latitude) params.set('lat', target.latitude);
+                if (target.longitude) params.set('lon', target.longitude);
+                const viewerUrl = `panorama-viewer.html?${params.toString()}`;
+                window.location.href = viewerUrl;
+            };
+
+            viewer.addHotSpot({
+                pitch: 0,
+                yaw: bearing,
+                type: "info",
+                cssClass: "custom-hotspot",
+                createTooltipFunc: hotspotWithIcon,
+                createTooltipArgs: { text: tooltipText, scale: scaleFactor }, // Pass scale here
+                clickHandlerFunc: createClickHandler(targetData, medianSqm, locationName)
+            });
+            hotspotsAdded++;
+        });
+        console.log(`Gateway hotspots processed. Added ${hotspotsAdded} hotspots.`);
+    }
+
+    // --- Main Initialization ---
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Apply translations based on stored language preference
+      if (typeof loadTranslations === 'function') {
+        loadTranslations(localStorage.getItem('language') || 'en');
+      } else {
+        console.error("loadTranslations function not found. Ensure script.js is loaded before this script.");
+      }
+
+      const panoramaContainer = document.getElementById('panorama');
+      const urlParams = new URLSearchParams(window.location.search);
+      let currentPanoramaData = {}; // Renamed for clarity
+      let manifestData = [];
+
+      // Read data for the current panorama from URL parameters
+      currentPanoramaData.panoramaUrl = urlParams.get('panoramaUrl'); // This will be the _8k.jpg path
+      currentPanoramaData.title = urlParams.get('title') || "Panorama"; // Title passed from previous page
+      currentPanoramaData.date = urlParams.get('date') || "N/A";
+      currentPanoramaData.sqm = urlParams.get('sqm') || "N/A";
+      currentPanoramaData.sqmFileUrl = urlParams.get('sqmFileUrl');
+      currentPanoramaData.latitude = parseFloat(urlParams.get('lat'));
+      currentPanoramaData.longitude = parseFloat(urlParams.get('lon'));
+      // The previewUrl is not directly passed via URL for the *current* panorama,
+      // but it's in the manifest for *target* gateway panoramas.
+      // For the current panorama, Pannellum will use panoramaUrl and can generate its own preview if not specified.
+
+      console.log("Retrieved current panorama data from URL:", currentPanoramaData);
+
+      if (!currentPanoramaData.panoramaUrl) {
+          console.error("Panorama URL parameter ('panoramaUrl') is missing.");
+          panoramaContainer.innerHTML = '<p style="color:white; text-align: center; padding-top: 50px;">Could not load panorama: Image URL missing.</p>';
+          return;
+      }
+
+      try {
+          const response = await fetch('data/manifest.json');
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          manifestData = await response.json();
+          manifestData = manifestData.map(item => ({
+              ...item, // Includes new fields like country, region, locality, exactIdentifier, panoNum, previewUrl
+              latitude: parseFloat(item.latitude),
+              longitude: parseFloat(item.longitude)
+              // previewUrl is already in the new manifest structure
+          }));
+          console.log("Manifest data loaded successfully for panorama viewer.");
+      } catch (error) {
+          console.error("Error fetching or parsing manifest.json for panorama viewer:", error);
+          manifestData = [];
+      }
+
+      const viewDataButton = document.getElementById('view-data-button');
+      if (viewDataButton && currentPanoramaData.sqmFileUrl) {
+          const dataParams = new URLSearchParams();
+          dataParams.set('sqmFile', currentPanoramaData.sqmFileUrl);
+          // Use the title passed via URL, which should be the more detailed one
+          if (currentPanoramaData.title) dataParams.set('location', currentPanoramaData.title);
+          if (currentPanoramaData.date) dataParams.set('date', currentPanoramaData.date);
+          if (!isNaN(currentPanoramaData.latitude)) dataParams.set('lat', currentPanoramaData.latitude);
+          if (!isNaN(currentPanoramaData.longitude)) dataParams.set('lon', currentPanoramaData.longitude);
+          if (currentPanoramaData.panoramaUrl) dataParams.set('panoramaUrl', currentPanoramaData.panoramaUrl);
+          const dataViewerUrl = `data-viewer.html?${dataParams.toString()}`;
+          viewDataButton.onclick = () => { window.location.href = dataViewerUrl; };
+          viewDataButton.style.display = 'inline-block';
+      } else if (viewDataButton) {
+           viewDataButton.style.display = 'none';
+      }
+
+      if (currentPanoramaData.panoramaUrl && currentPanoramaData.panoramaUrl !== 'about:blank') {
+        try {
+          console.log(`Initializing Pannellum with URL: ${currentPanoramaData.panoramaUrl}`);
+          // Construct a preview URL for the *current* panorama by convention
+          const currentPreviewUrl = currentPanoramaData.panoramaUrl.replace('_8k.jpg', '_preview.jpg');
+
+          // Determine HFOV settings based on device type
+          let hfov_initial, min_hfov, max_hfov;
+          const isMobile = window.innerWidth <= 768; // Common breakpoint for mobile
+
+          if (isMobile) {
+            hfov_initial = 70;
+            min_hfov = 15;
+            max_hfov = 100;
+          } else {
+            hfov_initial = 100;
+            min_hfov = 50;
+            max_hfov = 140;
+          }
+
+          const viewer = pannellum.viewer('panorama', {
+            "panorama": currentPanoramaData.panoramaUrl, // This is the 8k version
+            "preview": currentPreviewUrl, // Use the derived preview URL
+            "title": `${currentPanoramaData.title}<br><small>${currentPanoramaData.date} | SQM: ${currentPanoramaData.sqm}${!isNaN(currentPanoramaData.latitude) && !isNaN(currentPanoramaData.longitude) ? ` | Lat: ${currentPanoramaData.latitude.toFixed(4)}, Lon: ${currentPanoramaData.longitude.toFixed(4)}` : ''}</small>`,
+            // "author" field removed to prevent "by" prefix
+            "autoLoad": true,
+            "showZoomCtrl": true,
+            "showFullscreenCtrl": true,
+            "compass": true,
+            "northOffset": 0,
+            "hfov": hfov_initial,
+            "minHfov": min_hfov,
+            "maxHfov": max_hfov,
+            "friction": 0.05
+          });
+
+          viewer.on('error', function(err) {
+            console.error('Pannellum error:', err);
+            panoramaContainer.innerHTML = `<p style="color:red; text-align: center; padding: 50px 20px;">Error loading panorama: ${err}.</p>`;
+          });
+
+          viewer.on('load', async () => {
+            console.log('Pannellum panorama loaded successfully.');
+            const loadingMessage = panoramaContainer.querySelector('div[style*="position: absolute"]');
+            if (loadingMessage) loadingMessage.style.display = 'none';
+
+            await loadSQMHotspots(viewer, currentPanoramaData.sqmFileUrl);
+
+            if (manifestData.length > 0 && !isNaN(currentPanoramaData.latitude) && !isNaN(currentPanoramaData.longitude)) {
+                await loadGatewayHotspots(viewer, manifestData, currentPanoramaData);
+            } else {
+                console.warn("Skipping gateway hotspots: Missing manifest or invalid current coordinates.");
+            }
+          });
+        } catch (e) {
+          console.error("Error initializing Pannellum:", e);
+          panoramaContainer.innerHTML = '<p style="color:red; text-align: center; padding-top: 50px;">Could not initialize panorama viewer.</p>';
+        }
+      } else {
+        const errorMsg = "Panorama image URL is missing or invalid.";
+        console.error("Cannot initialize Pannellum:", errorMsg, currentPanoramaData);
+        panoramaContainer.innerHTML = `<p style="color:white; text-align: center; padding-top: 50px;">Could not load panorama: ${errorMsg}</p>`;
+      }
+      // --- Hotspot Opacity Slider Logic ---
+      const opacitySlider = document.getElementById('hotspot-opacity-slider');
+      const opacityValueSpan = document.getElementById('hotspot-opacity-value');
+
+      if (opacitySlider && opacityValueSpan) {
+        const initialValue = opacitySlider.value;
+        opacityValueSpan.textContent = `${initialValue}%`;
+        document.documentElement.style.setProperty('--hotspot-alpha', initialValue / 100);
+
+        opacitySlider.addEventListener('input', function() {
+          const value = this.value;
+          opacityValueSpan.textContent = `${value}%`;
+          document.documentElement.style.setProperty('--hotspot-alpha', value / 100);
+        });
+      } else {
+        console.warn("Opacity slider or value display element not found.");
+      }
+    });
+  </script>
+
+</body>
+</html>

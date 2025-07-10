@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyArchive - Panorama Gallery</title>
+<meta name="description" content="Explore the full archive of 360° night sky panoramas from various locations, documenting the impact of light pollution with SkyArchive.">
+<link rel="apple-touch-icon" sizes="180x180" href="img/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png">
+    <link rel="manifest" href="img/icons/site.webmanifest">
+    <link rel="shortcut icon" href="img/icons/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Added for icons in header -->
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="gallery-container">
+        <div class="container">
+            <div class="gallery-header">
+                <h1 data-translate-key="nav.panoramaGallery">Panorama Gallery</h1>
+                <p style="color: var(--text-secondary);" data-translate-key="gallery.pano.description">Browse the full archive of 360° night sky panoramas.</p>
+            </div>
+            <div class="gallery-grid">
+                <!-- Panorama items are dynamically loaded here by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <script src="js/services/dataService.js"></script>
+    <script src="js/services/mapService.js"></script>
+    <script src="js/services/galleryService.js"></script>
+    <script src="js/services/uiUtils.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Load Header
+        fetch('_header.html')
+            .then(response => response.text())
+            .then(data => {
+                const headerPlaceholder = document.getElementById('header-placeholder');
+                if (headerPlaceholder) {
+                    headerPlaceholder.innerHTML = data;
+                    // Initialize mobile menu and language switcher from uiUtils.js or script.js
+                    // This ensures they work after the header is dynamically loaded.
+                    if (typeof SkyArchiveUIUtils !== 'undefined' && SkyArchiveUIUtils.initMobileMenu) {
+                         SkyArchiveUIUtils.initMobileMenu();
+                    }
+                    // Language switcher setup might be in script.js or need a dedicated function
+                    if (typeof setLanguage === 'function' && typeof loadTranslations === 'function' && typeof updateLanguageSwitcherDisplay === 'function') {
+                        const languageDropdown = document.getElementById('languageDropdown');
+                        if (languageDropdown) {
+                            languageDropdown.addEventListener('click', (event) => {
+                                if (event.target.tagName === 'A' && event.target.dataset.lang) {
+                                    event.preventDefault();
+                                    setLanguage(event.target.dataset.lang);
+                                }
+                            });
+                        }
+                        // Initial load if not already handled by a global script.js event
+                        // This depends on how script.js is structured.
+                        // loadTranslations(localStorage.getItem('language') || 'en');
+                        // updateLanguageSwitcherDisplay();
+                    }
+                }
+            })
+            .catch(error => console.error('Error loading header:', error));
+
+        // Load Footer
+        fetch('_footer.html')
+            .then(response => response.text())
+            .then(data => {
+                const placeholder = document.getElementById('footer-placeholder');
+                if (placeholder) {
+                    placeholder.innerHTML = data;
+                    const scripts = placeholder.getElementsByTagName('script');
+                    for (let i = 0; i < scripts.length; i++) {
+                        const script = document.createElement('script');
+                        if (scripts[i].src) {
+                            script.src = scripts[i].src;
+                        } else {
+                            script.textContent = scripts[i].textContent;
+                        }
+                        document.body.appendChild(script).parentNode.removeChild(script);
+                    }
+                }
+            })
+            .catch(error => console.error('Error loading footer:', error));
+    </script>
+</body>
+</html>

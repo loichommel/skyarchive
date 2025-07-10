@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQM Data Viewer - SkyArchive</title>
+<meta name="description" content="View detailed 360° night sky panoramas and associated Sky Quality Meter (SQM) data with SkyArchive's interactive data viewer.">
+<link rel="apple-touch-icon" sizes="180x180" href="img/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/icons/favicon-16x16.png">
+    <link rel="manifest" href="img/icons/site.webmanifest">
+    <link rel="shortcut icon" href="img/icons/favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!-- Added for icons in header -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .chart-container {
+      position: relative;
+      height: 400px;
+      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+    .location-info h1 {
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+    }
+    .location-info p {
+        margin-bottom: 1.5rem;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        flex-grow: 1;
+    }
+    .location-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    #view-panorama-button {
+        margin-left: 1rem;
+        flex-shrink: 0;
+    }
+    .loading-message, .error-message {
+        text-align: center;
+        padding: 3rem;
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+    }
+    .loading-message i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+        color: var(--primary-color);
+    }
+    main.main-content .container {
+        padding-top: 6rem;
+        padding-bottom: 3rem;
+    }
+    #polar-plot-container {
+      position: relative;
+      width: 100%;
+      margin: 2rem auto 0;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 8px;
+      display: none;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    #polar-plot-container svg {
+        display: block;
+        margin: auto;
+        max-width: 100%;
+        height: auto;
+    }
+    .d3-tooltip {
+        position: absolute;
+        z-index: 10;
+        visibility: hidden;
+        background: rgba(0,0,0,0.8);
+        color: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        pointer-events: none;
+        white-space: nowrap;
+        line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+  <main class="main-content">
+      <div class="container">
+        <div class="location-info">
+          <div>
+            <h1 id="location-title">Loading Location...</h1>
+            <p id="location-details">Fetching data...</p>
+          </div>
+          <button id="view-panorama-button" class="btn" style="display: none;" title="View interactive panorama">
+              <i class="fas fa-binoculars"></i> View Panorama
+          </button>
+        </div>
+
+        <div id="visualization-area">
+            <div class="loading-message" id="loading-indicator">
+                <i class="fas fa-spinner fa-spin"></i>Loading SQM Data...
+            </div>
+            <div class="chart-container" style="display: none;">
+                <canvas id="sqmDistributionChart"></canvas>
+            </div>
+            <div class="error-message" id="error-indicator" style="display: none;">
+                Could not load data for this location.
+            </div>
+            <div id="polar-plot-container">
+                 <div class="loading-message" id="polar-loading-indicator" style="display: none; padding-top: 40%;">
+                    <i class="fas fa-spinner fa-spin"></i>Loading Polar Plot Data...
+                 </div>
+                 <div class="error-message" id="polar-error-indicator" style="display: none; padding-top: 40%;">
+                    Could not generate polar plot.
+                 </div>
+                 <!-- D3 SVG is appended here by JavaScript -->
+            </div>
+        </div>
+      </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/services/visualizationService.js"></script>
+  <script>
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+        });
+    }
+
+    // Helper functions to parse SQM text data
+    function parseSqmTextForHistogram(textData, sourceName = "data") {
+        const lines = textData.split('\n');
+        const sqmValues = [];
+        let dataStarted = false;
+        for (const line of lines) {
+          if (!dataStarted) {
+            if (!line.trim().startsWith('#') && line.trim().length > 0) { dataStarted = true; }
+            else { continue; }
+          }
+          if (line.trim().length === 0) continue;
+          const columns = line.trim().split(/\s+/);
+          if (columns.length >= 6) {
+            const mag = parseFloat(columns[5]);
+            if (!isNaN(mag)) { sqmValues.push(mag); }
+          }
+        }
+        if (sqmValues.length === 0) {
+             console.warn(`No valid SQM magnitude values found in ${sourceName}`);
+             return null;
+        }
+        return sqmValues;
+    }
+
+    function parseSqmTextForPolarPlot(textData, sourceName = "data") {
+        const lines = textData.split('\n');
+        const polarData = [];
+        let dataStarted = false;
+        const headerMapping = {};
+
+        for (const line of lines) {
+            const trimmedLine = line.trim();
+            if (trimmedLine.startsWith('#')) {
+                 if (trimmedLine.toLowerCase().includes('date') && trimmedLine.toLowerCase().includes('time') && trimmedLine.toLowerCase().includes('mag') && trimmedLine.toLowerCase().includes('alt') && trimmedLine.toLowerCase().includes('azi')) {
+                    const headers = trimmedLine.substring(1).trim().split(/\s+/);
+                    headers.forEach((h, i) => {
+                        const lowerHeader = h.toLowerCase();
+                        if (lowerHeader === 'mag' || lowerHeader === 'sqm') headerMapping.mag = i;
+                        if (lowerHeader === 'alt' || lowerHeader === 'altitude') headerMapping.alt = i;
+                        if (lowerHeader === 'azi' || lowerHeader === 'azimuth') headerMapping.azi = i;
+                    });
+                }
+                continue;
+            }
+            if (!dataStarted && trimmedLine.length > 0) { dataStarted = true; }
+            if (!dataStarted || trimmedLine.length === 0) continue;
+
+            const columns = trimmedLine.split(/\s+/);
+            const timeIndex = 2;
+            const magIndex = headerMapping.mag !== undefined ? headerMapping.mag : 5;
+            const altIndex = headerMapping.alt !== undefined ? headerMapping.alt : 7;
+            const aziIndex = headerMapping.azi !== undefined ? headerMapping.azi : 8;
+
+            if (columns.length > Math.max(timeIndex, magIndex, altIndex, aziIndex)) {
+                const time = columns[timeIndex];
+                const mag = parseFloat(columns[magIndex]);
+                const alt = parseFloat(columns[altIndex]);
+                const azi = parseFloat(columns[aziIndex]);
+                if (time && !isNaN(mag) && !isNaN(alt) && alt >= 0 && alt <= 90 && !isNaN(azi) && azi >= 0 && azi <= 360) {
+                    polarData.push({ time: time, mag: mag, alt: alt, azi: azi });
+                }
+            }
+        }
+        if (polarData.length === 0) {
+             console.warn(`No valid SQM data points (mag, alt, azi) found in ${sourceName}`);
+             return null;
+        }
+        return polarData;
+    }
+
+    // Main logic
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sqmFileUrl = urlParams.get('sqmFile');
+      const locationName = urlParams.get('location') || "Unknown Location";
+      const date = urlParams.get('date') || "N/A";
+      const lat = urlParams.get('lat');
+      const lon = urlParams.get('lon');
+      const panoramaUrl = urlParams.get('panoramaUrl');
+
+      const locationDetails = { name: locationName, date: date, lat: lat, lon: lon };
+
+      const titleEl = document.getElementById('location-title');
+      const detailsEl = document.getElementById('location-details');
+      const loadingEl = document.getElementById('loading-indicator');
+      const errorEl = document.getElementById('error-indicator');
+      const chartContainer = document.querySelector('.chart-container');
+      const polarPlotContainer = document.getElementById('polar-plot-container');
+      const polarLoadingEl = document.getElementById('polar-loading-indicator');
+      const polarErrorEl = document.getElementById('polar-error-indicator');
+
+      titleEl.textContent = locationName;
+      let detailsText = `SQM Data Distribution | Date: ${date}`;
+      if (lat && lon) {
+          detailsText += ` | Lat: ${parseFloat(lat).toFixed(4)}, Lon: ${parseFloat(lon).toFixed(4)}`;
+      }
+      detailsEl.textContent = detailsText;
+
+      const viewPanoButton = document.getElementById('view-panorama-button');
+      if (viewPanoButton && panoramaUrl) {
+          const panoParams = new URLSearchParams();
+          panoParams.set('panoramaUrl', panoramaUrl);
+          if (urlParams.has('location')) panoParams.set('title', urlParams.get('location'));
+          if (urlParams.has('date')) panoParams.set('date', urlParams.get('date'));
+          if (urlParams.has('sqm')) panoParams.set('sqm', urlParams.get('sqm'));
+          if (urlParams.has('sqmFile')) panoParams.set('sqmFileUrl', urlParams.get('sqmFile'));
+          if (urlParams.has('lat')) panoParams.set('lat', urlParams.get('lat'));
+          if (urlParams.has('lon')) panoParams.set('lon', urlParams.get('lon'));
+
+          const panoramaViewerUrl = `panorama-viewer.html?${panoParams.toString()}`;
+          viewPanoButton.onclick = () => { window.location.replace(panoramaViewerUrl); };
+          viewPanoButton.style.display = 'inline-block';
+      } else if (viewPanoButton) {
+          viewPanoButton.style.display = 'none';
+      }
+
+      if (!sqmFileUrl) {
+        console.error("SQM file URL parameter is missing.");
+        loadingEl.style.display = 'none';
+        errorEl.textContent = "Error: SQM data file not specified in URL.";
+        errorEl.style.display = 'block';
+        polarLoadingEl.style.display = 'none';
+        polarErrorEl.textContent = "Error: SQM data file not specified in URL.";
+        polarErrorEl.style.display = 'block';
+        polarPlotContainer.style.display = 'block';
+        return;
+      }
+
+      loadingEl.style.display = 'block';
+      polarPlotContainer.style.display = 'block';
+      polarLoadingEl.style.display = 'block';
+
+
+      try {
+        const response = await fetch(sqmFileUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status} for ${sqmFileUrl}`);
+        }
+        const textData = await response.text();
+
+        // Histogram
+        const sqmValues = parseSqmTextForHistogram(textData, sqmFileUrl);
+        if (typeof SkyArchiveVisualizationService !== 'undefined') {
+            if (sqmValues === null) {
+                loadingEl.style.display = 'none';
+                errorEl.textContent = "No valid SQM magnitude data found for histogram.";
+                errorEl.style.display = 'block';
+                chartContainer.style.display = 'none';
+            } else {
+                const chart = SkyArchiveVisualizationService.createHistogram('sqmDistributionChart', sqmValues);
+                if (chart) {
+                    loadingEl.style.display = 'none';
+                    chartContainer.style.display = 'block';
+                    errorEl.style.display = 'none';
+                } else {
+                    loadingEl.style.display = 'none';
+                    errorEl.textContent = "Failed to create histogram visualization.";
+                    errorEl.style.display = 'block';
+                    chartContainer.style.display = 'none';
+                }
+            }
+        } else {
+            console.error("SkyArchiveVisualizationService not found for histogram.");
+            loadingEl.style.display = 'none';
+            errorEl.textContent = "Visualization service error.";
+            errorEl.style.display = 'block';
+        }
+
+        // Polar Plot
+        const polarData = parseSqmTextForPolarPlot(textData, sqmFileUrl);
+        if (typeof SkyArchiveVisualizationService !== 'undefined') {
+            if (polarData === null) {
+                polarLoadingEl.style.display = 'none';
+                polarErrorEl.textContent = "No valid SQM data (mag, alt, azi) found for polar plot.";
+                polarErrorEl.style.display = 'block';
+            } else {
+                const polarPlot = SkyArchiveVisualizationService.createPolarPlot('polar-plot-container', polarData, locationDetails);
+                if (polarPlot) {
+                    polarLoadingEl.style.display = 'none';
+                    polarErrorEl.style.display = 'none';
+                } else {
+                    polarLoadingEl.style.display = 'none';
+                    polarErrorEl.textContent = "Failed to create polar plot visualization.";
+                    polarErrorEl.style.display = 'block';
+                }
+            }
+        } else {
+            console.error("SkyArchiveVisualizationService not found for polar plot.");
+            polarLoadingEl.style.display = 'none';
+            polarErrorEl.textContent = "Visualization service error.";
+            polarErrorEl.style.display = 'block';
+        }
+
+      } catch (error) {
+        console.error("Failed to load or process SQM data:", error);
+        loadingEl.style.display = 'none';
+        polarLoadingEl.style.display = 'none';
+        errorEl.textContent = `Error loading data: ${error.message}.`;
+        errorEl.style.display = 'block';
+        polarErrorEl.textContent = `Error loading data: ${error.message}.`;
+        polarErrorEl.style.display = 'block';
+        chartContainer.style.display = 'none';
+      }
+   });
+  </script>
+    <script>
+        // Load Header
+        fetch('_header.html')
+            .then(response => response.text())
+            .then(data => {
+                const headerPlaceholder = document.getElementById('header-placeholder');
+                if (headerPlaceholder) {
+                    headerPlaceholder.innerHTML = data;
+                    // Re-initialize mobile menu. Language switcher specific functions from script.js might be needed too.
+                    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                    const navLinks = document.getElementById('navLinks');
+                    if (mobileMenuBtn && navLinks) {
+                        mobileMenuBtn.addEventListener('click', function() {
+                            navLinks.classList.toggle('active');
+                        });
+                    }
+                    // Assuming global script.js handles language switcher initialization if needed,
+                    // or it's re-initialized via its own script block if it was part of _header.html
+                    // For this page, the original header didn't have the language switcher,
+                    // but the shared one does, so its functionality should come with it.
+                    // We might need to call functions from script.js if they are not self-initializing
+                    // based on the presence of elements.
+                    if (typeof setLanguage === 'function' && typeof loadTranslations === 'function' && typeof updateLanguageSwitcherDisplay === 'function') {
+                        const languageDropdown = document.getElementById('languageDropdown');
+                        if (languageDropdown) {
+                             languageDropdown.addEventListener('click', (event) => {
+                                if (event.target.tagName === 'A' && event.target.dataset.lang) {
+                                    event.preventDefault();
+                                    setLanguage(event.target.dataset.lang);
+                                }
+                            });
+                        }
+                        // It's important that the global script.js (if it handles language on DOMContentLoaded)
+                        // is either deferred or also re-runs its language setup if the header is loaded later.
+                        // For now, we explicitly add listeners. The actual translation load is tricky
+                        // as it might have already run. If script.js handles this globally, this might be redundant or okay.
+                        // loadTranslations(localStorage.getItem('language') || 'en'); // Might cause double load if script.js also does it
+                        // updateLanguageSwitcherDisplay();
+                    }
+                }
+            })
+            .catch(error => console.error('Error loading header:', error));
+
+        // Load Footer
+        fetch('_footer.html')
+            .then(response => response.text())
+            .then(data => {
+                const placeholder = document.getElementById('footer-placeholder');
+                if (placeholder) {
+                    placeholder.innerHTML = data;
+                    const scripts = placeholder.getElementsByTagName('script');
+                    for (let i = 0; i < scripts.length; i++) {
+                        const script = document.createElement('script');
+                        if (scripts[i].src) {
+                            script.src = scripts[i].src;
+                        } else {
+                            script.textContent = scripts[i].textContent;
+                        }
+                        document.body.appendChild(script).parentNode.removeChild(script);
+                    }
+                }
+            })
+            .catch(error => console.error('Error loading footer:', error));
+    </script>
+</body>
+</html>

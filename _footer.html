@@ -1,0 +1,27 @@
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <a href="index.html" class="logo">
+                <img src="img/icons/SkyArchive_logo_bright.png" alt="SkyArchive Logo" class="logo-icon">SkyArchive
+            </a>
+            <ul class="social-links">
+                <li><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>
+                <li><a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a></li>
+                <li><a href="#" aria-label="Flickr"><i class="fab fa-flickr"></i></a></li>
+            </ul>
+            <p class="copyright">© <span id="currentYear"></span> SkyArchive - Loïc Hommel. All rights reserved.</p>
+            <script>
+                const currentYearSpan = document.getElementById('currentYear');
+                if (currentYearSpan) {
+                    currentYearSpan.textContent = new Date().getFullYear();
+                } else {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const yearSpan = document.getElementById('currentYear');
+                        if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+                    });
+                }
+            </script>
+        </div>
+    </div>
+</footer>

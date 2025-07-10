@@ -1,0 +1,92 @@
+[
+  {
+    "title": "M81",
+    "date": "2025-03-31 to 2025-04-30",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "M81.jpg",
+    "previewName": "M81_preview.jpg",
+    "mediumImageName": "M81_medium.jpg",
+    "overlayImageName": "M81_overlay.svg"
+  },
+  {
+    "title": "LBN132",
+    "date": "2024-08-09 to 2024-08-10",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "LBN132.jpg",
+    "previewName": "LBN132_preview.jpg",
+    "mediumImageName": "LBN132_medium.jpg",
+    "overlayImageName": "LBN132_overlay.svg"
+  },
+  {
+    "title": "LDN807",
+    "date": "2024-08-05 to 2024-08-06",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "LDN807.jpg",
+    "previewName": "LDN807_preview.jpg",
+    "mediumImageName": "LDN807_medium.jpg",
+    "overlayImageName": "LDN807_overlay.svg"
+  },
+  {
+    "title": "Brocchi's Cluster",
+    "date": "2024-07-31",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "Brocchi_s_Cluster.jpg",
+    "previewName": "Brocchi_s_Cluster_preview.jpg",
+    "mediumImageName": "Brocchi_s_Cluster_medium.jpg",
+    "overlayImageName": "Brocchi_s_Cluster_overlay.svg"
+  },
+  {
+    "title": "LDN769",
+    "date": "2024-07-08",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "LDN769.jpg",
+    "previewName": "LDN769_preview.jpg",
+    "mediumImageName": "LDN769_medium.jpg",
+    "overlayImageName": "LDN769_overlay.svg"
+  },
+  {
+    "title": "Barnard 111",
+    "date": "YYYY-MM-DD",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "Barnard_111.jpg",
+    "previewName": "Barnard_111_preview.jpg",
+    "mediumImageName": "Barnard_111_medium.jpg",
+    "overlayImageName": "Barnard_111_overlay.svg"
+  },
+  {
+    "title": "LDN1296",
+    "date": "YYYY-MM-DD",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "LDN1296.jpg",
+    "previewName": "LDN1296_small.jpg",
+    "mediumImageName": "LDN1296_medium.jpg",
+    "overlayImageName": "LDN1296_overlay.svg"
+  },
+  {
+    "title": "M42",
+    "date": "YYYY-MM-DD",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "M42.jpg",
+    "previewName": "M42_preview.jpg",
+    "mediumImageName": "M42_medium.jpg",
+    "overlayImageName": "M42_overlay.svg"
+  },
+  {
+    "title": "Omicron Andromedae",
+    "date": "YYYY-MM-DD",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "Omicron_Andromedae.jpg",
+    "previewName": "Omicron_Andromedae_preview.jpg",
+    "mediumImageName": "Omicron_Andromedae_medium.jpg",
+    "overlayImageName": "Omicron_Andromedae_overlay.svg"
+  }
+]
