@@ -242,6 +242,93 @@ const SkyArchiveGalleryService = (() => {
         });
     }
 
+    // --- Panorama Gallery Sorting & Initialization ---
+
+    let fullPanoData = [];
+    let currentSortProperty = 'date'; // Default sort
+    let currentSortOrder = 'desc'; // Default order
+
+    // Sorts the full dataset based on current properties and calls initGallery to re-render.
+    function sortAndRenderGallery() {
+        if (!fullPanoData) return;
+
+        const sortedData = [...fullPanoData].sort((a, b) => {
+            // Handle SQM sorting separately to enforce items without data at the bottom.
+            if (currentSortProperty === 'sqm') {
+                const aVal = parseFloat(a.medianSqm);
+                const bVal = parseFloat(b.medianSqm);
+                const aIsNum = !isNaN(aVal);
+                const bIsNum = !isNaN(bVal);
+
+                if (aIsNum && !bIsNum) return -1; // a has SQM, b does not. a always comes first.
+                if (!aIsNum && bIsNum) return 1;  // b has SQM, a does not. b always comes first.
+                if (!aIsNum && !bIsNum) return 0; // Both lack SQM, their order doesn't matter relative to each other.
+
+                // If both are numbers, sort them based on the current order.
+                return currentSortOrder === 'asc' ? aVal - bVal : bVal - aVal;
+            }
+
+            // Standard sorting for other properties
+            let comparison = 0;
+            switch (currentSortProperty) {
+                case 'date':
+                    comparison = new Date(a.date) - new Date(b.date); // Sorts from oldest to newest
+                    break;
+                case 'location':
+                    comparison = (a.country || '').localeCompare(b.country || '');
+                    if (comparison === 0) {
+                        comparison = (a.region || '').localeCompare(b.region || '');
+                    }
+                    if (comparison === 0) {
+                        comparison = (a.locality || '').localeCompare(b.locality || '');
+                    }
+                    break;
+            }
+            // Invert comparison for descending order
+            return currentSortOrder === 'desc' ? -comparison : comparison;
+        });
+
+        initGallery(sortedData); // Re-render the gallery with sorted data
+    }
+
+    // New entry point for the gallery page. Sets up controls and performs initial render.
+    function initializeGalleryPage(processedData) {
+        fullPanoData = processedData || [];
+        const sortPropertySelect = document.getElementById('sort-property');
+        const sortOrderBtn = document.getElementById('sort-order-btn');
+
+        if (!sortPropertySelect || !sortOrderBtn) {
+            console.warn("Sorting controls not found. Rendering gallery without sorting functionality.");
+            initGallery(fullPanoData); // Fallback to default rendering if controls are missing
+            return;
+        }
+
+        // Set initial state of controls
+        sortPropertySelect.value = currentSortProperty;
+        const icon = sortOrderBtn.querySelector('i');
+        if (icon) {
+            icon.className = currentSortOrder === 'desc' ? 'fas fa-arrow-down-long' : 'fas fa-arrow-up-long';
+        }
+
+        // Add event listeners
+        sortPropertySelect.addEventListener('change', (e) => {
+            currentSortProperty = e.target.value;
+            sortAndRenderGallery();
+        });
+
+        sortOrderBtn.addEventListener('click', () => {
+            currentSortOrder = currentSortOrder === 'desc' ? 'asc' : 'desc';
+            if (icon) {
+                icon.className = currentSortOrder === 'desc' ? 'fas fa-arrow-down-long' : 'fas fa-arrow-up-long';
+            }
+            sortAndRenderGallery();
+        });
+
+        // Perform the initial sort and render
+        sortAndRenderGallery();
+    }
+
+
     // Initializes the main panorama gallery on panorama-gallery.html.
     function initGallery(processedData) {
         const galleryGrid = document.querySelector('.gallery-grid');
@@ -373,7 +460,7 @@ const SkyArchiveGalleryService = (() => {
         initPanoramaSlider,
         initSliderPannellumPlaceholders,
         addSliderClickListeners,
-        initGallery,
+        initializeGalleryPage,
         initAstroGallery,
         initFeaturedAstroGallery,
         openLightbox

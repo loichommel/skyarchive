@@ -190,7 +190,7 @@ function initializeUI(allData) {
         // Panorama Gallery Page (panorama-gallery.html)
         if (document.querySelector('main.gallery-container .gallery-grid') && window.location.pathname.includes('panorama-gallery.html')) {
             console.log("Initializing panorama gallery page via GalleryService...");
-            SkyArchiveGalleryService.initGallery(panoData);
+            SkyArchiveGalleryService.initializeGalleryPage(panoData);
         }
         // Astro Gallery Page (astro-gallery.html)
         if (document.querySelector('main.gallery-container .astro-gallery-grid') && window.location.pathname.includes('astro-gallery.html')) {
