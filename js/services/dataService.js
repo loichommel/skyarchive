@@ -19,9 +19,62 @@ const SkyArchiveDataService = (() => {
         }
     }
 
+    // Parses the text content of an SQM file.
+    function parseSqmText(textData) {
+        const lines = textData.split('\n');
+        const sqmValuesForMedian = [];
+        const allSqmValues = [];
+        const polarData = [];
+        let dataStarted = false;
+
+        for (const line of lines) {
+            if (!dataStarted) {
+                if (!line.trim().startsWith('#') && line.trim().length > 0) {
+                    dataStarted = true;
+                } else {
+                    continue;
+                }
+            }
+            if (line.trim().length === 0) continue;
+
+            const columns = line.trim().split(/\s+/);
+            if (columns.length >= 9) {
+                const time = columns[2];
+                const mag = parseFloat(columns[5]);
+                const alt = parseFloat(columns[7]);
+                const azi = parseFloat(columns[8]);
+
+                if (!isNaN(mag)) {
+                    allSqmValues.push(mag);
+                    if (time && !isNaN(alt) && alt >= 0 && alt <= 90 && !isNaN(azi) && azi >= 0 && azi <= 360) {
+                        polarData.push({ time, mag, alt, azi });
+                    }
+                    if (!isNaN(alt) && alt > 45) {
+                        sqmValuesForMedian.push(mag);
+                    }
+                }
+            }
+        }
+
+        let medianSqm = null;
+        if (sqmValuesForMedian.length > 0) {
+            medianSqm = calculateMedian(sqmValuesForMedian);
+        }
+
+        return {
+            medianSqm: medianSqm,
+            allSqmValues: allSqmValues,
+            polarData: polarData
+        };
+    }
+
     // Fetches and parses SQM data from a given URL.
     // Returns an object with medianSqm, allSqmValues, and polarData.
     async function fetchAndParseSqm(sqmFileUrl) {
+        // If the URL is null, undefined, or empty, return a default empty object immediately.
+        if (!sqmFileUrl) {
+            return { medianSqm: null, allSqmValues: [], polarData: [] };
+        }
         if (sqmCache[sqmFileUrl]) {
             return sqmCache[sqmFileUrl];
         }
@@ -31,50 +84,7 @@ const SkyArchiveDataService = (() => {
                 throw new Error(`HTTP error! status: ${response.status} for ${sqmFileUrl}`);
             }
             const textData = await response.text();
-            const lines = textData.split('\n');
-            const sqmValuesForMedian = [];
-            const allSqmValues = [];
-            const polarData = [];
-            let dataStarted = false;
-
-            for (const line of lines) {
-                if (!dataStarted) {
-                    if (!line.trim().startsWith('#') && line.trim().length > 0) {
-                        dataStarted = true;
-                    } else {
-                        continue;
-                    }
-                }
-                if (line.trim().length === 0) continue;
-
-                const columns = line.trim().split(/\s+/);
-                if (columns.length >= 9) {
-                    const time = columns[2];
-                    const mag = parseFloat(columns[5]);
-                    const alt = parseFloat(columns[7]);
-                    const azi = parseFloat(columns[8]);
-
-                    if (!isNaN(mag)) {
-                        allSqmValues.push(mag);
-                        if (time && !isNaN(alt) && alt >= 0 && alt <= 90 && !isNaN(azi) && azi >= 0 && azi <= 360) {
-                             polarData.push({ time, mag, alt, azi });
-                        }
-                        if (!isNaN(alt) && alt > 45) {
-                            sqmValuesForMedian.push(mag);
-                        }
-                    }
-                }
-            }
-
-            let medianSqm = null;
-            if (sqmValuesForMedian.length > 0) {
-                medianSqm = calculateMedian(sqmValuesForMedian);
-            }
-            const processedData = {
-                medianSqm: medianSqm,
-                allSqmValues: allSqmValues,
-                polarData: polarData
-            };
+            const processedData = parseSqmText(textData);
             sqmCache[sqmFileUrl] = processedData;
             return processedData;
 
@@ -161,7 +171,8 @@ const SkyArchiveDataService = (() => {
     return {
         fetchAndParseSqm: fetchAndParseSqm,
         loadAndProcessData: loadAndProcessData,
-        calculateMedian: calculateMedian
+        calculateMedian: calculateMedian,
+        parseSqmText: parseSqmText // Expose the new parsing function
     };
 
 })();
