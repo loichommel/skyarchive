@@ -24,6 +24,19 @@
                 <h1 data-translate-key="nav.panoramaGallery">Panorama Gallery</h1>
                 <p style="color: var(--text-secondary);" data-translate-key="gallery.pano.description">Browse the full archive of 360° night sky panoramas.</p>
             </div>
+            <div class="gallery-controls">
+                <div class="sort-control">
+                    <label for="sort-property" data-translate-key="gallery.sort.label">Sort by:</label>
+                    <select id="sort-property">
+                        <option value="date" data-translate-key="gallery.sort.date">Date</option>
+                        <option value="sqm" data-translate-key="gallery.sort.sqm">SQM</option>
+                        <option value="location" data-translate-key="gallery.sort.location">Location</option>
+                    </select>
+                </div>
+                <button id="sort-order-btn" class="btn-sort" title="Toggle Sort Order" data-translate-key="gallery.sort.toggleOrder" data-translate-attr="title">
+                    <i class="fas fa-arrow-down-long"></i>
+                </button>
+            </div>
             <div class="gallery-grid">
                 <!-- Panorama items are dynamically loaded here by JavaScript -->
             </div>
