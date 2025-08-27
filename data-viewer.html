@@ -132,6 +132,7 @@
   <div id="footer-placeholder"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/services/dataService.js"></script>
   <script src="js/services/visualizationService.js"></script>
   <script>
     // Mobile menu toggle
@@ -141,76 +142,6 @@
         mobileMenuBtn.addEventListener('click', function() {
             navLinks.classList.toggle('active');
         });
-    }
-
-    // Helper functions to parse SQM text data
-    function parseSqmTextForHistogram(textData, sourceName = "data") {
-        const lines = textData.split('\n');
-        const sqmValues = [];
-        let dataStarted = false;
-        for (const line of lines) {
-          if (!dataStarted) {
-            if (!line.trim().startsWith('#') && line.trim().length > 0) { dataStarted = true; }
-            else { continue; }
-          }
-          if (line.trim().length === 0) continue;
-          const columns = line.trim().split(/\s+/);
-          if (columns.length >= 6) {
-            const mag = parseFloat(columns[5]);
-            if (!isNaN(mag)) { sqmValues.push(mag); }
-          }
-        }
-        if (sqmValues.length === 0) {
-             console.warn(`No valid SQM magnitude values found in ${sourceName}`);
-             return null;
-        }
-        return sqmValues;
-    }
-
-    function parseSqmTextForPolarPlot(textData, sourceName = "data") {
-        const lines = textData.split('\n');
-        const polarData = [];
-        let dataStarted = false;
-        const headerMapping = {};
-
-        for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (trimmedLine.startsWith('#')) {
-                 if (trimmedLine.toLowerCase().includes('date') && trimmedLine.toLowerCase().includes('time') && trimmedLine.toLowerCase().includes('mag') && trimmedLine.toLowerCase().includes('alt') && trimmedLine.toLowerCase().includes('azi')) {
-                    const headers = trimmedLine.substring(1).trim().split(/\s+/);
-                    headers.forEach((h, i) => {
-                        const lowerHeader = h.toLowerCase();
-                        if (lowerHeader === 'mag' || lowerHeader === 'sqm') headerMapping.mag = i;
-                        if (lowerHeader === 'alt' || lowerHeader === 'altitude') headerMapping.alt = i;
-                        if (lowerHeader === 'azi' || lowerHeader === 'azimuth') headerMapping.azi = i;
-                    });
-                }
-                continue;
-            }
-            if (!dataStarted && trimmedLine.length > 0) { dataStarted = true; }
-            if (!dataStarted || trimmedLine.length === 0) continue;
-
-            const columns = trimmedLine.split(/\s+/);
-            const timeIndex = 2;
-            const magIndex = headerMapping.mag !== undefined ? headerMapping.mag : 5;
-            const altIndex = headerMapping.alt !== undefined ? headerMapping.alt : 7;
-            const aziIndex = headerMapping.azi !== undefined ? headerMapping.azi : 8;
-
-            if (columns.length > Math.max(timeIndex, magIndex, altIndex, aziIndex)) {
-                const time = columns[timeIndex];
-                const mag = parseFloat(columns[magIndex]);
-                const alt = parseFloat(columns[altIndex]);
-                const azi = parseFloat(columns[aziIndex]);
-                if (time && !isNaN(mag) && !isNaN(alt) && alt >= 0 && alt <= 90 && !isNaN(azi) && azi >= 0 && azi <= 360) {
-                    polarData.push({ time: time, mag: mag, alt: alt, azi: azi });
-                }
-            }
-        }
-        if (polarData.length === 0) {
-             console.warn(`No valid SQM data points (mag, alt, azi) found in ${sourceName}`);
-             return null;
-        }
-        return polarData;
     }
 
     // Main logic
@@ -275,7 +206,6 @@
       polarPlotContainer.style.display = 'block';
       polarLoadingEl.style.display = 'block';
 
-
       try {
         const response = await fetch(sqmFileUrl);
         if (!response.ok) {
@@ -283,16 +213,19 @@
         }
         const textData = await response.text();
 
+        // Use the centralized parsing function from dataService.js
+        const parsedData = SkyArchiveDataService.parseSqmText(textData);
+        const { allSqmValues, polarData } = parsedData;
+
         // Histogram
-        const sqmValues = parseSqmTextForHistogram(textData, sqmFileUrl);
         if (typeof SkyArchiveVisualizationService !== 'undefined') {
-            if (sqmValues === null) {
+            if (!allSqmValues || allSqmValues.length === 0) {
                 loadingEl.style.display = 'none';
                 errorEl.textContent = "No valid SQM magnitude data found for histogram.";
                 errorEl.style.display = 'block';
                 chartContainer.style.display = 'none';
             } else {
-                const chart = SkyArchiveVisualizationService.createHistogram('sqmDistributionChart', sqmValues);
+                const chart = SkyArchiveVisualizationService.createHistogram('sqmDistributionChart', allSqmValues);
                 if (chart) {
                     loadingEl.style.display = 'none';
                     chartContainer.style.display = 'block';
@@ -312,9 +245,8 @@
         }
 
         // Polar Plot
-        const polarData = parseSqmTextForPolarPlot(textData, sqmFileUrl);
         if (typeof SkyArchiveVisualizationService !== 'undefined') {
-            if (polarData === null) {
+            if (!polarData || polarData.length === 0) {
                 polarLoadingEl.style.display = 'none';
                 polarErrorEl.textContent = "No valid SQM data (mag, alt, azi) found for polar plot.";
                 polarErrorEl.style.display = 'block';
