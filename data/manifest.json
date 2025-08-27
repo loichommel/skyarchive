@@ -304,5 +304,41 @@
     "fStop": "0.95",
     "exposure": "2.5",
     "iso": "800"
+  },
+   {
+    "country": "Luxembourg",
+    "region": "Wiltz",
+    "locality": "Boulaide",
+    "exactIdentifier": "2025-08-25_49.873550N_005.813070E",
+    "panoNum": "Pano1",
+    "date": "2025-08-25",
+    "latitude": 49.873550,
+    "longitude": 5.813070,
+    "previewUrl": "img/panoramas/Luxembourg/Wiltz/Boulaide/2025-08-25_49.873550N_005.813070E/Pano1/2025-08-25_49.873550N_005.813070E_Pano1_rectilinear_preview.jpg",
+    "panoramaUrl": "img/panoramas/Luxembourg/Wiltz/Boulaide/2025-08-25_49.873550N_005.813070E/Pano1/2025-08-25_49.873550N_005.813070E_Pano1_rectilinear_8k.jpg",
+    "sqmFileUrl": "data/sqm_readings/Luxembourg/Wiltz/Boulaide/2025-08-25_49.873550N_005.813070E/Pano1/2025-08-25_49.873550N_005.813070E_Pano1_SQM.txt",
+    "camera": "ILCE-6700",
+    "lens": "50",
+    "fStop": "0.95",
+    "exposure": "5",
+    "iso": "1600"
+  },
+  {
+    "country": "Luxembourg",
+    "region": "Wiltz",
+    "locality": "Boulaide",
+    "exactIdentifier": "2025-08-25_49.871647N_005.807991E",
+    "panoNum": "Pano2",
+    "date": "2025-08-25",
+    "latitude": 49.871647,
+    "longitude": 5.807991,
+    "previewUrl": "img/panoramas/Luxembourg/Wiltz/Boulaide/2025-08-25_49.871647N_005.807991E/Pano2/2025-08-25_49.871647N_005.807991E_Pano2_rectilinear_preview.jpg",
+    "panoramaUrl": "img/panoramas/Luxembourg/Wiltz/Boulaide/2025-08-25_49.871647N_005.807991E/Pano2/2025-08-25_49.871647N_005.807991E_Pano2_rectilinear_8k.jpg",
+    "sqmFileUrl": "data/sqm_readings/Luxembourg/Wiltz/Boulaide/2025-08-25_49.871647N_005.807991E/Pano2/2025-08-25_49.871647N_005.807991E_Pano2_SQM.txt",
+    "camera": "ILCE-6700",
+    "lens": "50",
+    "fStop": "0.95",
+    "exposure": "5",
+    "iso": "1600"
   }
 ]
