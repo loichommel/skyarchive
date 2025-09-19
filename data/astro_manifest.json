@@ -1,5 +1,25 @@
 [
   {
+    "title": "NGC7000 Mosaic",
+    "date": "Jun. 2025 to Sep. 2025",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "NGC7000.jpg",
+    "previewName": "NGC7000_preview.jpg",
+    "mediumImageName": "NGC7000_medium.jpg",
+    "overlayImageName": "NGC7000_overlay.svg"
+  },
+  {
+    "title": "Window to the Galaxy",
+    "date": "Sep. 2024",
+    "camera": "ILCE-6700",
+    "telescope": "35mm",
+    "imageName": "Sölktäler.jpg",
+    "previewName": "Sölktäler_preview.jpg",
+    "mediumImageName": "Sölktäler_medium.jpg",
+    "overlayImageName": ""
+  },
+  {
     "title": "M81",
     "date": "2025-03-31 to 2025-04-30",
     "camera": "QHY268M",
