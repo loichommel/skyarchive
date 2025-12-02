@@ -1,5 +1,15 @@
 [
   {
+    "title": "Double Cluster in Perseus",
+    "date": "Nov. 2025",
+    "camera": "QHY268M",
+    "telescope": "Sharpstar/TS 15028HNT",
+    "imageName": "NGC869.jpg",
+    "previewName": "NGC869_preview.jpg",
+    "mediumImageName": "NGC869_medium.jpg",
+    "overlayImageName": "NGC869_overlay.svg"
+  },
+  {
     "title": "NGC7000 Mosaic",
     "date": "Jun. 2025 to Sep. 2025",
     "camera": "QHY268M",
