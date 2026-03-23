@@ -448,5 +448,41 @@
     "fStop": "0.95",
     "exposure": "5",
     "iso": "400"
+  },
+  {
+    "country": "Luxembourg",
+    "region": "Mersch",
+    "locality": "Bissen",
+    "exactIdentifier": "2026-01-21_49.780236N_006.079039E",
+    "panoNum": "Pano1",
+    "date": "2026-01-21",
+    "latitude": 49.780236,
+    "longitude": 6.079039,
+    "previewUrl": "img/panoramas/Luxembourg/Mersch/Bissen/2026-01-21_49.780236N_006.079039E/Pano1/2026-01-21_49.780236N_006.079039E_Pano1_rectilinear_preview.jpg",
+    "panoramaUrl": "img/panoramas/Luxembourg/Mersch/Bissen/2026-01-21_49.780236N_006.079039E/Pano1/2026-01-21_49.780236N_006.079039E_Pano1_rectilinear_8k.jpg",
+    "sqmFileUrl": "data/sqm_readings/Luxembourg/Mersch/Bissen/2026-01-21_49.780236N_006.079039E/Pano1/2026-01-21_49.780236N_006.079039E_Pano1_SQM.txt",
+    "camera": "ILCE-6700",
+    "lens": "35",
+    "fStop": "0.95",
+    "exposure": "5",
+    "iso": "400"
+  },
+  {
+    "country": "Luxembourg",
+    "region": "Clervaux",
+    "locality": "Parc Hosingen",
+    "exactIdentifier": "2026-03-22_50.016638N_006.049289E",
+    "panoNum": "Pano1",
+    "date": "2026-03-22",
+    "latitude": 50.016638,
+    "longitude": 6.049289,
+    "previewUrl": "img/panoramas/Luxembourg/Clervaux/Parc_Hosingen/2026-03-22_50.016638N_006.049289E/Pano1/2026-03-22_50.016638N_006.049289E_Pano1_rectilinear_preview.jpg",
+    "panoramaUrl": "img/panoramas/Luxembourg/Clervaux/Parc_Hosingen/2026-03-22_50.016638N_006.049289E/Pano1/2026-03-22_50.016638N_006.049289E_Pano1_rectilinear_8k.jpg",
+    "sqmFileUrl": "data/sqm_readings/Luxembourg/Clervaux/Parc_Hosingen/2026-03-22_50.016638N_006.049289E/Pano1/2026-03-22_50.016638N_006.049289E_Pano1_SQM.txt",
+    "camera": "ILCE-6700",
+    "lens": "35",
+    "fStop": "0.95",
+    "exposure": "5",
+    "iso": "400"
   }
 ]
